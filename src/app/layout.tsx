@@ -3,6 +3,7 @@ import { Provider } from "@/components/provider";
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import "./globals.css";
+import { Header } from "@/components/nav";
 
 
 const fontSans = FontSans({
@@ -34,6 +35,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Header />
           {children}
         </Provider>
       </body>
