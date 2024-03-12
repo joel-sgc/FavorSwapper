@@ -1,0 +1,17 @@
+{
+  "id": "mig_cnnki5h107vlk7tmlec0",
+  "parentID": "mig_cnnjcbhpoijrpt98v400",
+  "checksum": "1:7cc35922f15b76b0c316e32d0f9678a7e26fc38e6a0afe977094e8138f6aeb8b",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "socials",
+          "type": "json",
+          "defaultValue": "{\n  \"instagram\": \"\",\n  \"tiktok\": \"\",\n  \"twitter\": \"\"\n}"
+        },
+        "table": "nextauth_users"
+      }
+    }
+  ]
+}

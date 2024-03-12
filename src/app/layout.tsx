@@ -3,7 +3,7 @@ import { Provider } from "@/components/provider";
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import "./globals.css";
-import { Header } from "@/components/nav";
+import { Footer, Header } from "@/components/nav";
 
 
 const fontSans = FontSans({
@@ -25,7 +25,7 @@ export default function RootLayout({
     <html suppressHydrationWarning lang="en">
       <body 
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased flex flex-col",
           fontSans.variable
         )}
       >
@@ -36,7 +36,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          {children}
+          <main className="flex flex-col flex-1 h-full">
+            {children}
+          </main>
+          <Footer />
         </Provider>
       </body>
     </html>

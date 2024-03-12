@@ -11,7 +11,7 @@ export const Header = () => {
   const { data: session, status } = useSession();
 
   return (
-    <header className="border-b-2 py-2 mb-4">
+    <header className="border-b-2 py-2">
       <div className="flex items-center justify-between container">
         <MainSidebar />
         
@@ -21,7 +21,7 @@ export const Header = () => {
           {session ? (
             <Avatar>
               <AvatarImage src={session.user?.image as string} referrerPolicy="no-referrer"/>
-              <AvatarFallback>{session.user?.name?.slice(0,1) || <CircleUserRound/>}</AvatarFallback>
+              <AvatarFallback className="bg-primary text-background">{session.user?.name?.slice(0,1) || <CircleUserRound/>}</AvatarFallback>
             </Avatar>
           ) : (
             <Button aria-label='Sign in button' className="text-white p-0 bg-background cursor-pointer hover:bg-transparent" asChild onClick={() => signIn('google')}>
@@ -54,4 +54,13 @@ const MainSidebar = () => (
       </DrawerFooter>
     </DrawerContent>
   </Drawer>
+)
+
+
+export const Footer = () => (
+  <footer className="border-t-2 sticky bottom-0">
+    <div className="flex items-center justify-evenly container">
+
+    </div>
+  </footer>
 )
