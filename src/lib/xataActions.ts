@@ -1,12 +1,14 @@
 "use server"
 
+import { revalidatePath } from "next/cache";
 import { getXataClient } from "./xata";
 
 export const updateUser = async({ id, data }: { id: string, data: any }) => {
   const xata = getXataClient();
 
-  console.log(data);
-  await xata.db.nextauth_users.updateOrThrow(id, data);
+  const status = await xata.db.nextauth_users.updateOrThrow(id, data);
+  console.log(status);
+  revalidatePath('/account');
 }
 
 export const uploadImage = async( formData: FormData ) => {
@@ -20,8 +22,9 @@ export const uploadImage = async( formData: FormData ) => {
     });
 
     const res = await req.json();
-    return res
+
+    return {status: 200, data: res}
   } catch (error) {
-    throw(error);
+    return {status: 500, error}
   }
 }

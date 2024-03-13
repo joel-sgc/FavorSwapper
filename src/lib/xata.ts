@@ -20,6 +20,8 @@ const tables = [
         defaultValue:
           '{\n  "instagram": "",\n  "tiktok": "",\n  "twitter": ""\n}',
       },
+      { name: "username", type: "string", unique: true },
+      { name: "favorPoints", type: "int", notNull: true, defaultValue: "0" },
     ],
     revLinks: [
       { column: "user", table: "nextauth_accounts" },

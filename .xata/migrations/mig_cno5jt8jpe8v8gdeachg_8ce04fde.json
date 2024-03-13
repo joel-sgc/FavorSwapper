@@ -1,0 +1,18 @@
+{
+  "id": "mig_cno5jt8jpe8v8gdeachg",
+  "parentID": "mig_cno4vbamn2k6mj7gv6eg",
+  "checksum": "1:8ce04fdefc93a264dbe5b384a3b6b91d82ebf5a3438460521f56c0ffa14d7d9a",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "favorPoints",
+          "type": "int",
+          "notNull": true,
+          "defaultValue": "0"
+        },
+        "table": "nextauth_users"
+      }
+    }
+  ]
+}

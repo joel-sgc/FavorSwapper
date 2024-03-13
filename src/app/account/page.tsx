@@ -7,16 +7,19 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { FormEvent, useState } from "react";
 import { updateUser, uploadImage } from "@/lib/xataActions";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { revalidatePath } from "next/cache";
 
 type changesType = {
+  username?: string | null,
   name?: string | null,
   image?: string,
   socials?: {
     instagram?: string | null,
     tiktok?: string | null,
     twitter?: string | null
-  }
+  } | any
 }
 
 const Account = () => {
@@ -36,6 +39,7 @@ const Account = () => {
     // Store only any changes, not anything that stayed the same
     const changes: changesType = {
       name: (formData.get('name') as string).trim(),
+      username: (formData.get('username') as string).trim().toLocaleLowerCase(),
       image: '',
       socials: {
         instagram: (formData.get('instagram') as string).trim(),
@@ -46,13 +50,14 @@ const Account = () => {
 
     // Check basic info
     if (changes.name?.length === 0 || changes.name === session?.user.name) delete changes.name;
+    if (changes.username?.length === 0 || changes.username === session?.user.username || changes.username === session?.user.email) delete changes.username;
     
     // Check socials
     if (changes.socials?.instagram === session?.user.socials.instagram) delete changes.socials?.instagram;
     if (changes.socials?.tiktok === session?.user.socials.tiktok) delete changes.socials?.tiktok;
     if (changes.socials?.twitter === session?.user.socials.twitter) delete changes.socials?.twitter;
     
-    if (Object.keys(changes.socials || {}).length === 0) {
+    if (Object.keys(changes.socials).length === 0) {
       delete changes.socials;
     }
     
@@ -63,7 +68,12 @@ const Account = () => {
       formData.delete('tiktok');
       formData.delete('twitter');
       
-      changes.image = (await uploadImage(formData)).data.thumb.url;
+      const status = (await uploadImage(formData)).data.thumb.url;
+      if (status === 500) {
+        setLoading(false);
+        setError(status.error);
+        return toast.error("Something went wrong! Please try again.");
+      }
     } else {
       delete changes.image;
     }
@@ -73,8 +83,9 @@ const Account = () => {
 
     // Send data to Xata.io
     await updateUser({id: session?.user.id as string, data: changes});
-
-    setLoading(true);
+    setLoading(false);
+    toast.success("Account updated successfully!");
+    revalidatePath('/account')
   }
 
   return (
@@ -119,6 +130,7 @@ const Account = () => {
               />
             </div>
 
+            <InputLabel label="Username" inputProps={{placeholder: session?.user?.username as string, name: 'username', disabled: loading, defaultValue: session?.user.username || session?.user.email}}/>
             <InputLabel label="Name" inputProps={{placeholder: session?.user?.name as string, name: 'name', disabled: loading, defaultValue: session?.user.name}}/>
 
             <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -132,7 +144,16 @@ const Account = () => {
 
           <div className="grid gap-2">
             {error && <span className="text-red-500 text-md text-center mx-auto">{error}</span>}
-            <Button disabled={loading} type="submit">Save Changes</Button>
+            <Button disabled={loading} type="submit">
+              {loading ? (
+                <>
+                  <Loader2 className="w-6 h-6 mr-2 animate-spin"/>
+                  Loading...
+                </>
+              ) : (
+                'Save Changes'
+              )}
+            </Button>
           </div>
         </form>
         <hr className="mt-8"/>

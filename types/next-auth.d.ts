@@ -6,8 +6,9 @@ declare module "next-auth" {
    */
   interface Session {
     user: {
-      /** The user's postal address. */
       id: string,
+      username: string,
+      favorPoints: number,
       name: string,
       email: string,
       image: string,
@@ -20,6 +21,8 @@ declare module "next-auth" {
   }
 
   interface User {
+    username: string,
+    favorPoints: number,
     socials: {
       instagram: string,
       tiktok: string,
