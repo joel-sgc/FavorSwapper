@@ -89,76 +89,74 @@ const Account = () => {
   }
 
   return (
-    <>
-      <section className="container pt-4 flex-1 flex flex-col">   {/*  Profile Settings  */}
-        <SectionHeader main_label="Profile" secondary_label="This is how others will see you on the site."/>
-        <hr className="my-8"/>
+    <section className="container pt-4 flex-1 flex flex-col">
+      <SectionHeader main_label="Profile" secondary_label="This is how others will see you on the site."/>
+      <hr className="my-8"/>
 
-        <form onSubmit={(e) => changeProfile(e)} className="flex-1 flex flex-col gap-8">
-          <div className="flex-1 flex flex-col gap-8">
-            <div className="grid gap-2 text-ellipsis">
-              <div className="flex items-center justify-between">
-                <img src={session?.user?.image as string} className="size-24 rounded-full border-2"/>
+      <form onSubmit={(e) => changeProfile(e)} className="flex-1 flex flex-col gap-8">
+        <div className="flex-1 flex flex-col gap-8">
+          <div className="grid gap-2 text-ellipsis">
+            <div className="flex items-center justify-between">
+              <img src={session?.user?.image as string} className="size-24 rounded-full border-2"/>
 
-                <ArrowRight className={pfpPreview.length > 0 ? 'block' : 'hidden'} size={32}/>
+              <ArrowRight className={pfpPreview.length > 0 ? 'block' : 'hidden'} size={32}/>
 
-                <img src={pfpPreview} className={`size-24 rounded-full border-2 ${pfpPreview.length > 0 ? 'block' : 'hidden'}`}/>
-              </div>
+              <img src={pfpPreview} className={`size-24 rounded-full border-2 ${pfpPreview.length > 0 ? 'block' : 'hidden'}`}/>
+            </div>
 
-              <Input
-                accept="image/*"
-                disabled={loading}
-                name="pfp"
-                type="file"
-                onChange={(e) => {
-                  if (e.target.files?.length === 0 || e.target.files === null) return;
-                  
-                  // If file is over 5MB, send error. Otherwise allow it
-                  if ((e.target?.files[0].size/1024)/1024 > 6) {
-                    e.target.value = '';  // Reset value
-                    return setError('Profile picture too large, your profile picture should be 5MB or under.');
-                  } else {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(e.target.files[0]);
+            <Input
+              accept="image/*"
+              disabled={loading}
+              name="pfp"
+              type="file"
+              onChange={(e) => {
+                if (e.target.files?.length === 0 || e.target.files === null) return;
+                
+                // If file is over 5MB, send error. Otherwise allow it
+                if ((e.target?.files[0].size/1024)/1024 > 6) {
+                  e.target.value = '';  // Reset value
+                  return setError('Profile picture too large, your profile picture should be 5MB or under.');
+                } else {
+                  const reader = new FileReader();
+                  reader.readAsDataURL(e.target.files[0]);
 
-                    reader.onloadend = () => {
-                      setPfpPreview(reader.result as string);
-                    }
-                    setError('');
+                  reader.onloadend = () => {
+                    setPfpPreview(reader.result as string);
                   }
-                }}
-              />
-            </div>
-
-            <InputLabel label="Username" inputProps={{placeholder: session?.user?.username as string, name: 'username', disabled: loading, defaultValue: session?.user.username || session?.user.email}}/>
-            <InputLabel label="Name" inputProps={{placeholder: session?.user?.name as string, name: 'name', disabled: loading, defaultValue: session?.user.name}}/>
-
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label>Socials</Label>
-              <TrailingInput autoComplete='off' placeholder="username" defaultValue={session?.user.socials.instagram} disabled={loading} name="instagram" trail='Instagram.com/' type="text"/>
-              <TrailingInput autoComplete='off' placeholder="@username" defaultValue={session?.user.socials.tiktok} disabled={loading} name="tiktok" trail='TikTok.com/' type="text"/>
-              <TrailingInput autoComplete='off' placeholder="username" defaultValue={session?.user.socials.twitter} disabled={loading} name="twitter" trail='Twitter.com/' type="text"/>
-            </div>
+                  setError('');
+                }
+              }}
+            />
           </div>
 
+          <InputLabel label="Username" inputProps={{placeholder: session?.user?.username as string, name: 'username', disabled: loading, defaultValue: session?.user.username || session?.user.email}}/>
+          <InputLabel label="Name" inputProps={{placeholder: session?.user?.name as string, name: 'name', disabled: loading, defaultValue: session?.user.name}}/>
 
-          <div className="grid gap-2">
-            {error && <span className="text-red-500 text-md text-center mx-auto">{error}</span>}
-            <Button disabled={loading} type="submit">
-              {loading ? (
-                <>
-                  <Loader2 className="w-6 h-6 mr-2 animate-spin"/>
-                  Loading...
-                </>
-              ) : (
-                'Save Changes'
-              )}
-            </Button>
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label>Socials</Label>
+            <TrailingInput autoComplete='off' placeholder="username" defaultValue={session?.user.socials.instagram} disabled={loading} name="instagram" trail='Instagram.com/' type="text"/>
+            <TrailingInput autoComplete='off' placeholder="@username" defaultValue={session?.user.socials.tiktok} disabled={loading} name="tiktok" trail='TikTok.com/' type="text"/>
+            <TrailingInput autoComplete='off' placeholder="username" defaultValue={session?.user.socials.twitter} disabled={loading} name="twitter" trail='Twitter.com/' type="text"/>
           </div>
-        </form>
-        <hr className="mt-8"/>
-      </section>
-    </>
+        </div>
+
+
+        <div className="grid gap-2">
+          {error && <span className="text-red-500 text-md text-center mx-auto">{error}</span>}
+          <Button disabled={loading} type="submit">
+            {loading ? (
+              <>
+                <Loader2 className="w-6 h-6 mr-2 animate-spin"/>
+                Loading...
+              </>
+            ) : (
+              'Save Changes'
+            )}
+          </Button>
+        </div>
+      </form>
+      <hr className="mt-8"/>
+    </section>
   )
 }
 

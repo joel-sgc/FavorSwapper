@@ -3,9 +3,7 @@ import GoogleProvider from 'next-auth/providers/google'
 import { XataClient, getXataClient } from '@/lib/xata';
 import { AuthOptions } from "next-auth";
 
-
 const client = new XataClient();
-
 
 export const authOptions: AuthOptions = {
   adapter: XataAdapter(client),
@@ -21,9 +19,10 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async session({ session, user, token }) {
+      session.user.favorPoints = user.favorPoints;
       session.user.username = user.username;
+      session.user.friends = user.friends;
       session.user.socials = user.socials;
-      session.user.favorPoints = user.favorPoints
       session.user.id = user.id;
       return session;
     },

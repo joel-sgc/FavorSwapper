@@ -4,19 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { signIn, useSession } from "next-auth/react";
 import { Apple, Google } from "@/components/svg";
 import { Button } from "@/components/ui/button";
-import { useRouter } from 'next/navigation';
 import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
 
 export default function Page() {
   const { status } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.push('/');
-    }
-  }, [status])
 
   if (status === "loading") return (
     <section className="container flex-1 grid place-content-center">

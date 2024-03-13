@@ -12,6 +12,7 @@ declare module "next-auth" {
       name: string,
       email: string,
       image: string,
+      friends: string[],
       socials: {
         instagram: string,
         tiktok: string,
@@ -22,6 +23,7 @@ declare module "next-auth" {
 
   interface User {
     username: string,
+    friends: string[],
     favorPoints: number,
     socials: {
       instagram: string,

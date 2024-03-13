@@ -1,8 +1,8 @@
 'use client'
 
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "./ui/drawer";
+import { CircleUserRound, Home, LayoutList, Menu, Settings, Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CircleUserRound, Menu, Settings } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { ThemeToggle } from "./theme-toggle";
 import { AuthButton } from "./auth-button";
@@ -85,9 +85,17 @@ const MainSidebar = ({ session }: { session: Session | null }) => {
 
 
 export const Footer = () => (
-  <footer className="border-t-2 sticky bottom-0">
+  <footer className="bg-background border-t-2 py-2 sticky bottom-0">
     <div className="flex items-center justify-evenly container">
-
+      <Button size='icon' variant='ghost' className="p-2 w-full">
+        <LayoutList size={24}/>
+      </Button>
+      <Button asChild size='icon' variant='ghost' className="p-2 w-full">
+        <a href="/"><Home size={24}/></a>
+      </Button>
+      <Button asChild size='icon' variant='ghost' className="p-2 w-full">
+        <a href="/friends"><Users size={24}/></a>
+      </Button>
     </div>
   </footer>
 )

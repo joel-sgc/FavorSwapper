@@ -22,6 +22,7 @@ const tables = [
       },
       { name: "username", type: "string", unique: true },
       { name: "favorPoints", type: "int", notNull: true, defaultValue: "0" },
+      { name: "friends", type: "multiple" },
     ],
     revLinks: [
       { column: "user", table: "nextauth_accounts" },

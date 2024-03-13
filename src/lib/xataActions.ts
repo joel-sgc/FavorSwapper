@@ -28,3 +28,29 @@ export const uploadImage = async( formData: FormData ) => {
     return {status: 500, error}
   }
 }
+
+export const getFriends = async ( friends: string[] ) => {
+  const xata = getXataClient();
+  if (!friends) return [];
+
+  const fullFriendsData = [];
+
+  for (let i = 0; i < friends.length; i++) {
+    const currentFriend = await xata.db.nextauth_users.filter({ username: friends[i] }).getFirst();
+
+    if (!currentFriend) continue;
+
+    fullFriendsData.push({
+      name: currentFriend.name,
+      image: currentFriend.image,
+    });
+  }
+
+  return fullFriendsData;
+}
+
+export const addFriend = async ( id: string, friends: string[], username: string ) => {
+  const xata = getXataClient();
+
+  await xata.db.nextauth_users.updateOrThrow(id , {friends: [...friends as unknown as string[] || [], username]});
+}

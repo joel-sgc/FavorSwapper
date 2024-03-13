@@ -1,0 +1,16 @@
+{
+  "id": "mig_cnormc3e865cme5e15sg",
+  "parentID": "mig_cno5jt8jpe8v8gdeachg",
+  "checksum": "1:00555d3ea5104d749f98035853b29d3f8403380a203db3fb8fa3ce17bcf36161",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "Friends",
+          "type": "multiple"
+        },
+        "table": "nextauth_users"
+      }
+    }
+  ]
+}
