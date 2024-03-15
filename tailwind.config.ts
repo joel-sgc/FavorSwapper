@@ -1,5 +1,5 @@
 import { fontFamily } from "tailwindcss/defaultTheme";
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
@@ -19,6 +19,9 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        'touch': { raw: 'only screen and ((hover: none) or (hover: hover)) and (pointer: coarse)' }
+      },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
@@ -78,7 +81,9 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+  ],
 } satisfies Config
 
 export default config

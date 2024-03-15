@@ -15,7 +15,7 @@ export const Header = () => {
   const { data: session, status } = useSession();
 
   return (
-    <header className={`border-b-2 py-2 sticky top-0 transition-all ${status === "unauthenticated" ? '!relative !top-[-100vh] opacity-0' : ''}`}>
+    <header className={`border-b-2 py-2 sticky top-0 transition-all bg-background ${status === "unauthenticated" ? '!relative !top-[-100vh] opacity-0' : ''}`}>
       <div className="flex items-center justify-between container">
         <MainSidebar session={session}/>
         
@@ -68,7 +68,7 @@ const MainSidebar = ({ session }: { session: Session | null }) => {
         <DrawerFooter className="grid grid-cols-[40px_1fr_40px]">
           <Button size='icon' asChild onClick={() => setOpen(false)}>
             <a href="/account">
-              <Settings size={32}/>
+              <Settings size={24}/>
             </a>
           </Button>
 

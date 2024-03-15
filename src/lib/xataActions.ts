@@ -36,11 +36,13 @@ export const getFriends = async ( friends: string[] ) => {
   const fullFriendsData = [];
 
   for (let i = 0; i < friends.length; i++) {
-    const currentFriend = await xata.db.nextauth_users.filter({ username: friends[i] }).getFirst();
+    const currentFriend = await xata.db.nextauth_users.read(friends[i]);
 
     if (!currentFriend) continue;
 
     fullFriendsData.push({
+      id: currentFriend.id,
+      username: currentFriend.username,
       name: currentFriend.name,
       image: currentFriend.image,
     });
@@ -49,8 +51,45 @@ export const getFriends = async ( friends: string[] ) => {
   return fullFriendsData;
 }
 
-export const addFriend = async ( id: string, friends: string[], username: string ) => {
+export const addFriend = async ( id: string, username: string ) => {
   const xata = getXataClient();
 
-  await xata.db.nextauth_users.updateOrThrow(id , {friends: [...friends as unknown as string[] || [], username]});
+  const user = await xata.db.nextauth_users.read(id);   // Find the user's info
+
+  const newFriend = await xata.db.nextauth_users.filter({ username }).getFirst();   // Find the user we want to add as a friend
+  if (!newFriend) {
+    return {status: 500, error: "This person doesn't exist :("};
+  }
+
+  else if (user?.friends?.includes(newFriend?.id as string)) {
+    return {status: 500, error: 'This person is already a friend!'};
+  }
+
+  else if (!user?.friends || user.friends.length === 0) {
+    revalidatePath('/friends');
+    await user?.update({ friends: [newFriend.id] });
+  }
+
+  else {
+    await user?.update({ friends: [...user.friends, newFriend.id] });
+  }
+}
+
+export const removeFriends = async ( id: string, friends: string[] ) => {
+  const xata = getXataClient();
+
+  try {
+    const user = await xata.db.nextauth_users.read(id);
+    const existingFriends = user?.friends;
+
+    let filteredArray = (existingFriends as string[]).filter(item => !friends.includes(item));
+
+    user?.update({ friends: filteredArray });
+
+    revalidatePath('/friends');
+    return { status: 200, data: filteredArray }
+  } catch (error) {
+    return { status: 200, error: error as string };
+  }
+
 }

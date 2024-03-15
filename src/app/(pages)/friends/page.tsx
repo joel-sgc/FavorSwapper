@@ -1,24 +1,23 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-import { AddFriendForm } from "./add-friend-form";
-import { getFriends } from "@/lib/xataActions";
-import { getServerSession } from "next-auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"
+import { revalidatePath } from "next/cache";
 
 const Friends = async () => {
-  const session = await getServerSession(authOptions);
-  const friends = await getFriends(session?.user.friends as string[]);
+  const submit = async ( formData: FormData ) => {
+    "use server"
 
+    console.log('actions');
+
+    revalidatePath('/friends')
+  }
+
+  
   return (
-    <section className="container mt-4 grid gap-2">
-      {/* ADD FRIEND */}
-      <AddFriendForm id={session?.user.id as string} friends={session?.user.friends as string[]} />
-
-      <ul>
-        {friends && friends.map((friend, index) => (
-          <li key={index}>{friend.name}</li>
-        ))}
-      </ul>
-    </section>
+    <form action={submit} className="mt-8 container flex gap-2">
+      <Input name="name"/>
+      <Button type="submit">Submit</Button>
+    </form>
   )
 }
 
-export default Friends;
+export default Friends
