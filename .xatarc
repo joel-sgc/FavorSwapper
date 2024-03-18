@@ -1,6 +1,0 @@
-{
-  "databaseURL": "https://Joel-Gutierrez-s-workspace-nctjvj.us-east-1.xata.sh/db/Favor-Swapper",
-  "codegen": {
-    "output": "src/lib/xata.ts"
-  }
-}

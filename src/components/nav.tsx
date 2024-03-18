@@ -1,7 +1,7 @@
 'use client'
 
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "./ui/drawer";
-import { CircleUserRound, Home, LayoutList, Menu, Settings, Users } from "lucide-react";
+import { CircleUserRound, Coins, Home, LayoutList, Menu, Settings, Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signIn, useSession } from "next-auth/react";
 import { ThemeToggle } from "./theme-toggle";
@@ -15,11 +15,11 @@ export const Header = () => {
   const { data: session, status } = useSession();
 
   return (
-    <header className={`border-b-2 py-2 sticky top-0 transition-all bg-background ${status === "unauthenticated" ? '!relative !top-[-100vh] opacity-0' : ''}`}>
+    <header className={`border-b-2 py-2 sticky top-0 transition-all bg-background z-[49] ${status === "unauthenticated" ? '!fixed w-full !top-[-100vh] opacity-0' : ''}`}>
       <div className="flex items-center justify-between container">
         <MainSidebar session={session}/>
         
-        <img src='/Andy.svg' alt='logo' width={40} height={40} className="w-10 h-10"/>
+        <img src='/Andy.svg' alt='logo' width={40} height={40} className="size-10"/>
 
         <div className="w-10 h-10">
           {session ? (
@@ -84,18 +84,22 @@ const MainSidebar = ({ session }: { session: Session | null }) => {
 }
 
 
-export const Footer = () => (
-  <footer className="bg-background border-t-2 py-2 sticky bottom-0">
-    <div className="flex items-center justify-evenly container">
-      <Button size='icon' variant='ghost' className="p-2 w-full">
-        <LayoutList size={24}/>
-      </Button>
-      <Button asChild size='icon' variant='ghost' className="p-2 w-full">
-        <a href="/"><Home size={24}/></a>
-      </Button>
-      <Button asChild size='icon' variant='ghost' className="p-2 w-full">
-        <a href="/friends"><Users size={24}/></a>
-      </Button>
-    </div>
-  </footer>
-)
+export const Footer = () => {
+  const { status } = useSession();
+
+  return (
+    <footer className={`bg-background border-t-2 py-2 sticky bottom-0 transition-all ${status === "unauthenticated" ? '!fixed w-full !bottom-[-100vh]' : ''}`}>
+      <div className="flex items-center justify-evenly container">
+        <Button size='icon' variant='ghost' className="p-2 w-full">
+          <LayoutList size={24}/>
+        </Button>
+        <Button asChild size='icon' variant='ghost' className="p-2 w-full">
+          <a href="/"><Home size={24}/></a>
+        </Button>
+        <Button asChild size='icon' variant='ghost' className="p-2 w-full">
+          <a href="/points"><Coins size={24}/></a>
+        </Button>
+      </div>
+    </footer>
+  )
+}

@@ -8,4 +8,8 @@ export default withAuth({
       else return false;
     },
   },
+  pages: {
+    signIn: '/api/auth/signIn',
+    // error: '/error',
+  }
 });

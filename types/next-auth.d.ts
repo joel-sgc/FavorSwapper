@@ -1,4 +1,5 @@
-import NextAuth from "next-auth"
+import { socials } from "@/drizzle/schema";
+import NextAuth from "next-auth";
 
 declare module "next-auth" {
   /**
@@ -13,22 +14,18 @@ declare module "next-auth" {
       email: string,
       image: string,
       friends: string[],
-      socials: {
-        instagram: string,
-        tiktok: string,
-        twitter: string
-      }
+      socials: socials,
+      activeDays: string[]
+      streak: number
     }
   }
 
   interface User {
     username: string,
-    friends: string[],
+    friends: string,
     favorPoints: number,
-    socials: {
-      instagram: string,
-      tiktok: string,
-      twitter: string
-    }
+    socials: string,
+    activeDays: string,
+    streak: number
   }
 }
