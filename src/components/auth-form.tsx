@@ -1,6 +1,5 @@
 import { auth, signIn, signOut } from "@/auth"
 import { Button } from "./ui/button";
-import nodemailer from 'nodemailer';
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
 
@@ -8,20 +7,6 @@ type Provider = 'google' | 'nodemailer'
 
 export const AuthForm = async ({ provider, className, ...props }: { className?: string, provider: Provider }) => {
   const session = await auth();
-  
-  // const sendEmail = async (form: HTMLFormElement) => {
-  //   const to = form.get('email');
-
-  //   const transport = nodemailer.createTransport({
-  //     host: 'smtp.zoho.com',
-  //     port: '465',
-  //     secure: true,
-  //     auth: {
-  //       user: '',
-  //       pass: ''
-  //     }
-  //   })
-  // }
 
   return (
     <form
@@ -31,7 +16,7 @@ export const AuthForm = async ({ provider, className, ...props }: { className?: 
         if (session) {
           await signOut();
         } else {
-          await signIn(provider, { email: 'joeloultook@gmail.com' });
+          await signIn(provider, { email: form.get('email') });
         }
       }}
       {...props}
