@@ -1,5 +1,6 @@
 import { Roboto } from "next/font/google";
-import { cn } from "@/lib/utils"
+import { Header } from "@/components/nav";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
 import type { Metadata } from "next";
@@ -46,9 +47,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={cn(
-        "min-h-screen bg-background font-sans antialiased",
+        "min-h-screen flex flex-col bg-background font-sans antialiased",
         roboto.variable
       )}>
+        <Header />
         {children}
       </body>
     </html>

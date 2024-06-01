@@ -22,7 +22,7 @@ export const AuthForm = async ({ provider, className, ...props }: { className?: 
       {...props}
     >
 
-      <Input type="email" name="email" placeholder="johndoe@email.com" required={provider === 'nodemailer'} className={(provider === 'google' || session) ? 'hidden' : ''}/>
+      <Input type="email" name="email" placeholder="johndoe@email.com" required={(provider === 'nodemailer' && !session)} className={(provider === 'google' || session) ? 'hidden' : ''}/>
       <Button type="submit">
         {session ? 'Sign Out' : (
           provider === 'google' ? 'Sign In with Google' : 'Sign In with Email'

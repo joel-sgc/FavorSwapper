@@ -9,10 +9,13 @@ const prisma = new PrismaClient()
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
-    google,
+    google({
+      allowDangerousEmailAccountLinking: true
+    }),
     nodemailer({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
     })
   ],
+  
 })
