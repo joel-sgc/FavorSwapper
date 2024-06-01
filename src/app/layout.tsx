@@ -12,7 +12,7 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: "DACS Favor Swapper",
-  description: "Ofibodegas ofrece espacios de oficina y almacenamiento flexibles y seguros para empresas. Personaliza tu espacio según tus necesidades. ¡Contáctanos hoy para más información!",
+  description: "Join DACS Favor Swapper! Connect with friends, join favor groups, and earn daily points through check-ins and ads. Turn everyday tasks into rewarding quests. Start swapping favors now!",
   icons: {
     icon: [
       {
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: process.env.BASE_URL,
     title: 'DACS Favor Swapper',
-    description: 'Ofibodegas ofrece espacios de oficina y almacenamiento flexibles y seguros para empresas. Personaliza tu espacio según tus necesidades. ¡Contáctanos hoy para más información!',
+    description: 'Join DACS Favor Swapper! Connect with friends, join favor groups, and earn daily points through check-ins and ads. Turn everyday tasks into rewarding quests. Start swapping favors now!',
     siteName: 'DACS Favor Swapper',
     images: [{url: `${process.env.BASE_URL}/og.webp`}],
   },
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     images: `${process.env.BASE_URL}/og.webp`,
     title: 'DACS Favor Swapper',
-    description: 'Ofibodegas ofrece espacios de oficina y almacenamiento flexibles y seguros para empresas. Personaliza tu espacio según tus necesidades. ¡Contáctanos hoy para más información!',
+    description: 'Join DACS Favor Swapper! Connect with friends, join favor groups, and earn daily points through check-ins and ads. Turn everyday tasks into rewarding quests. Start swapping favors now!',
   },
   metadataBase: new URL(process.env.BASE_URL as string),
 };
