@@ -39,6 +39,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.BASE_URL as string),
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
