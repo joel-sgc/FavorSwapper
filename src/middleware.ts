@@ -6,11 +6,8 @@ const authPages = [
 ];
 
 export function middleware(request: NextRequest) {
-  let sessionCookie = request.cookies.get('authjs.session-token');
+  let sessionCookie = request.cookies.get(process.env.SESSION_COOKIE_NAME as string);
 
-  if (process.env.NODE_ENV === 'production') {
-    sessionCookie = request.cookies.get('__Secure-authjs.session-token');
-  }
 
   const pathname = request.nextUrl.pathname;
 
