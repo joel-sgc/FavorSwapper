@@ -6,14 +6,20 @@ const authPages = [
 ];
 
 export function middleware(request: NextRequest) {
-  const sessionCookie = request.cookies.get('authjs.session-token');
+  let sessionCookie = request.cookies.get('authjs.session-token');
+
+  if (process.env.NODE_ENV === 'production') {
+    sessionCookie = request.cookies.get('__Secure-authjs.session-token');
+  }
+
   const pathname = request.nextUrl.pathname;
 
-  // If there's no session cookie and the path is not an auth page, redirect to login
+  // If there's no session cookie and the path is not an auth page, redirect to login (also ignore logo loading)
   if (!sessionCookie && !authPages.includes(pathname) && pathname !== '/logo.svg') {
     return NextResponse.redirect(`${process.env.BASE_URL}/auth/login`);
   }
 
+  // If there's a session cookie and the path is an auth page, redirect to home
   if (sessionCookie && authPages.includes(pathname)) {
     return NextResponse.redirect(`${process.env.BASE_URL}/`)
   }
