@@ -21,7 +21,7 @@ export default function manifest(): MetadataRoute.Manifest {
       }
     ],
     orientation: "portrait",
-    display: "fullscreen",
+    display: "standalone",
     lang: "en-US",
     start_url: "/",
     scope: "/",
