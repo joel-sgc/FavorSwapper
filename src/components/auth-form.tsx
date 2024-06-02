@@ -1,7 +1,9 @@
+"use server"
 import { auth, signIn, signOut } from "@/auth"
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
+import { ReactNode } from "react";
 
 type Provider = 'google' | 'nodemailer'
 
@@ -30,3 +32,14 @@ export const AuthForm = async ({ provider, className, ...props }: { className?: 
     </form>
   )
 }
+
+export const SignOutForm = ({ className, children, ...props }: { className?: string, children?: ReactNode }) => (
+  <form action={async () => {
+    "use server"
+    await signOut();
+  }}>
+    <Button type="submit" className={className} {...props}>
+      {children}
+    </Button>
+  </form>
+)

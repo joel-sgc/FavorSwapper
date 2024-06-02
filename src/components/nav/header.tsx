@@ -1,16 +1,17 @@
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
 import * as React from "react";
 import Link from 'next/link';
 import { auth } from "@/auth";
 import { Menu, User } from "lucide-react";
+import { MobileDrawer } from "./mobile-drawer";
 
 export const Header = async () => {
   const session = await auth();
 
   return (
     <header className="w-full flex gap-4 items-center justify-between p-4 md:px-8">
-      <Menu className="md:hidden"/>
+      <MobileDrawer session={session}/>
 
       <Button asChild variant='link' className="p-0 h-auto text-center">
         <Link href='/' className="inline-flex gap-2">
