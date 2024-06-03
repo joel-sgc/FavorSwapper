@@ -1,6 +1,6 @@
 "use server"
 
-import { profileFormSchema } from "@/app/api/settings/profile-form";
+import { profileFormSchema } from "@/app/(pages)/settings/profile-form";
 import prisma from "@/prisma/client";
 import { z } from "zod";
 
