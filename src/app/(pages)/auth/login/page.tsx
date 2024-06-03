@@ -41,9 +41,9 @@ export default async function Page() {
           </div>
 
 
-          <form action={async() => {
+          <form action={async(form) => {
             "use server"
-            await signIn('nodemailer');
+            await signIn('nodemailer', { email: form.get('email') });
           }}
             className="grid gap-4 w-full"
           >

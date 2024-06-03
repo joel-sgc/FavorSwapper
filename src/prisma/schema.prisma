@@ -8,26 +8,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                String          @id @default(cuid())
-  name              String?
-  email             String          @unique
-  emailVerified     DateTime?
-  image             String?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  accounts          Account[]
-  Authenticator     Authenticator[]
-  sessions          Session[]
+//  Favor objects will be shared between senders/receivers and stored within favor groups
+// {
+  // id: cuid()
+  // title: String
+  // description: String
+  // favorValue: number
+  // sender: {id, name}
 
-  activeDaysHistory DateTime[]      @default(dbgenerated("(ARRAY[]::timestamp without time zone[])::timestamp(3) without time zone[]"))
-  favorPoints       Int             @default(5)
-  socials           String          @default("{tiktok: '', instagram: '', twitter: ''}")
+  // Next 2 are interchangable depending on whether it's a 
   
-  xata_id           String          @unique(map: "User__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
-  xata_version      Int             @default(0)
-  xata_createdat    DateTime        @default(now()) @db.Timestamptz(6)
-  xata_updatedat    DateTime        @default(now()) @db.Timestamptz(6)
+  // user-user
+  // or
+  // user-group 
+
+  // receiver: {id, name}
+// }
+
+model User {
+  id             String          @id @default(cuid())
+  name           String?
+  username       String?         @unique
+  email          String          @unique
+  emailVerified  DateTime?
+  image          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  accounts       Account[]
+  Authenticators Authenticator[]
+  sessions       Session[]
+
+  activeDaysHistory DateTime[] @default(dbgenerated("(ARRAY[]::timestamp without time zone[])::timestamp(3) without time zone[]"))
+  socials           String     @default("{\"tiktok\":\"\",\"instagram\":\"\",\"twitter\":\"\"}")
+
+  favorPoints    Int          @default(5)
+  sentFavors     String       @default("[]")        // array of favor objects signifying favors. 
+  receivedFavors String       @default("[]")
+  favorGroups    String       @default("[]")
+
+  sentFriendRequests     String @default("[]")
+  receivedFriendRequests String @default("[]")
+  friends                String @default("[{}]")
 }
 
 model Account {
@@ -45,44 +66,29 @@ model Account {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  xata_id           String   @unique(map: "Account__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
-  xata_version      Int      @default(0)
-  xata_createdat    DateTime @default(now()) @db.Timestamptz(6)
-  xata_updatedat    DateTime @default(now()) @db.Timestamptz(6)
 
   @@id([provider, providerAccountId])
 }
 
 model Session {
-  sessionToken   String   @unique
-  userId         String
-  expires        DateTime
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  xata_id        String   @unique(map: "Session__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
-  xata_version   Int      @default(0)
-  xata_createdat DateTime @default(now()) @db.Timestamptz(6)
-  xata_updatedat DateTime @default(now()) @db.Timestamptz(6)
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
-  identifier     String
-  token          String
-  expires        DateTime
-  
-  xata_id        String   @unique(map: "VerificationToken__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
-  xata_version   Int      @default(0)
-  xata_createdat DateTime @default(now()) @db.Timestamptz(6)
-  xata_updatedat DateTime @default(now()) @db.Timestamptz(6)
+  identifier String
+  token      String
+  expires    DateTime
 
   @@id([identifier, token])
 }
 
 model Authenticator {
-  credentialID         String   @unique
+  credentialID         String  @unique
   userId               String
   providerAccountId    String
   credentialPublicKey  String
@@ -90,12 +96,16 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
-  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  xata_id              String   @unique(map: "Authenticator__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
-  xata_version         Int      @default(0)
-  xata_createdat       DateTime @default(now()) @db.Timestamptz(6)
-  xata_updatedat       DateTime @default(now()) @db.Timestamptz(6)
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
+}
+
+model FavorGroup {
+  id        String   @id @default(cuid())
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  members   String   @default("[]")     // Stringified array of user ids and names
+  favors    String   @default("[]")
 }

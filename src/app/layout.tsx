@@ -4,6 +4,10 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 
 import type { Metadata } from "next";
+import { auth } from "@/auth";
+import { MiddlewareProvider } from "@/components/middleware-provider";
+import { Footer } from "@/components/nav/footer";
+import { Toaster } from "@/components/ui/sonner";
  
 const roboto = Roboto({
   variable: "--roboto",
@@ -40,19 +44,26 @@ export const metadata: Metadata = {
 };
 
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" className="dark">
       <body className={cn(
         "min-h-screen flex flex-col bg-background font-sans antialiased",
         roboto.variable
       )}>
-        <Header />
-        {children}
+        <Header session={session}/>
+        <MiddlewareProvider session={session}>
+          {children}
+        </MiddlewareProvider>
+        <Footer />
+      
+        <Toaster richColors/>
       </body>
     </html>
   );
