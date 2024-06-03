@@ -1,10 +1,9 @@
 "use client"
 
 import { CalendarIcon, UserIcon } from "lucide-react"
-import { Favor } from "@prisma/client";
 import { useState } from "react"
 
-export const FavorComp = ({ request, className, index, ...props }: { request: Favor, className?: string, index: number }) => {
+export const FavorComp = ({ request, className, index, ...props }: { request: any, className?: string, index: number }) => {
   const [expandedRequest, setExpandedRequest] = useState<number | null>(null)
   const handleRequestClick = ( index: number ) => {
     setExpandedRequest(index === expandedRequest ? null : index)
