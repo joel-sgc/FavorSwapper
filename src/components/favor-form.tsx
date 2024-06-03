@@ -13,7 +13,6 @@ import { Button } from "./ui/button";
 import { CalendarIcon, ChevronsUpDown } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
-import { friend } from "@/auth";
 
 export const favorFormSchema = z.object({
   title: z.string().min(2).max(50),
@@ -23,7 +22,7 @@ export const favorFormSchema = z.object({
   receiverId: z.string().cuid(),
 })
 
-export const FavorForm = ({ friends, className, ...props }: { friends?: friend[] ,className?: string }) => {
+export const FavorForm = ({ friends, className, ...props }: { friends?: any[] ,className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);
   const [loading, setLoading] = useState(false);
 
