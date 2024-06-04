@@ -19,7 +19,7 @@ export const DailyCheckin = ({
         <CardTitle>Daily Check-In</CardTitle>
         <CardDescription>Review your activity and points earned for the month.</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-8 md:grid-cols-2 px-4 xs:px-6">
+      <CardContent className="grid gap-8 md:grid-cols-2 px-0 3xs:px-2 2xs:px-4 xs:px-6">
         <div className="grid gap-4">
           <div className="flex items-center justify-between w-full">
             <div className="text-2xl font-bold">{session?.user.favorPoints}</div>

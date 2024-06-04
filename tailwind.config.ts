@@ -20,8 +20,9 @@ const config = {
     },
     extend: {
       screens: {
-        "2xs": "300px",
-        "xs": "360px",
+        "3xs": "320px",
+        "2xs": "360px",
+        "xs": "380px",
       },
       fontFamily: {
         sans: ["var(--roboto)", ...fontFamily.sans],
