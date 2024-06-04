@@ -8,7 +8,7 @@ import { Session } from "next-auth";
 import { ProfileDropdown } from "./profile-dropdown";
 
 export const Header = async ({ session }: { session: Session | null }) => (
-  <header className="w-full flex gap-4 items-center justify-between p-4 md:px-8 border border-b-2 sticky top-0 bg-background">
+  <header className="w-full flex gap-4 items-center justify-between p-4 md:px-8 border-b-2 sticky top-0 bg-background">
     <MobileDrawer session={session}/>
 
     <Button asChild variant='link' className="p-0 h-auto text-center">

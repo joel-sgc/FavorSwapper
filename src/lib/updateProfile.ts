@@ -4,7 +4,7 @@ import { profileFormSchema } from "@/app/(pages)/settings/profile-form";
 import prisma from "@/prisma/client";
 import { z } from "zod";
 
-export const UpdateUser = async ( email: string, data: z.infer<typeof profileFormSchema> ) => {
+export const UpdateProfile = async ( email: string, data: z.infer<typeof profileFormSchema> ) => {
   try {
     await prisma.user.update({
       where: { email },

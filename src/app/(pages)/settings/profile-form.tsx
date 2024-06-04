@@ -5,13 +5,13 @@ import { z } from "zod";
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { UpdateProfile } from "@/lib/updateProfile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { Session } from "next-auth";
 import { useState } from "react";
-import { UpdateUser } from "@/lib/updateUser";
 import { toast } from "sonner";
 
 export const profileFormSchema = z.object({
@@ -48,7 +48,7 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
 
   async function onSubmit(data: z.infer<typeof profileFormSchema>) {
     setLoading(true);
-    const res = await UpdateUser(user?.email as string, data);
+    const res = await UpdateProfile(user?.email as string, data);
     setLoading(false);
 
     if (res.status === 200) {

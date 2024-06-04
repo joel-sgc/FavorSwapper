@@ -3,7 +3,7 @@ import { Roboto } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { auth } from "@/auth";
 import { MiddlewareProvider } from "@/components/middleware-provider";
 import { Footer } from "@/components/nav/footer";
@@ -14,6 +14,13 @@ const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
   subsets: ["latin"],
 })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: true
+}
 
 export const metadata: Metadata = {
   title: "DACS Favor Swapper",

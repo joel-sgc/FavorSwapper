@@ -10,9 +10,11 @@ import { Textarea } from "./ui/textarea";
 import { Input } from "./ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
-import { CalendarIcon, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
+import { minimalUser } from "@/auth";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "./ui/command";
 
 export const favorFormSchema = z.object({
   title: z.string().min(2).max(50),
@@ -22,9 +24,11 @@ export const favorFormSchema = z.object({
   receiverId: z.string().cuid(),
 })
 
-export const FavorForm = ({ friends, className, ...props }: { friends?: any[] ,className?: string }) => {
+export const FavorForm = ({ friends, className, ...props }: { friends?: minimalUser[] ,className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const favorRecipients = friends?.map((friend) => ({ label: friend.name, value: friend.id }))
 
   const form = useForm<z.infer<typeof favorFormSchema>>({
     resolver: zodResolver (favorFormSchema),
@@ -163,6 +167,34 @@ export const FavorForm = ({ friends, className, ...props }: { friends?: any[] ,c
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search language..." />
+                      <CommandEmpty>No language found.</CommandEmpty>
+                      <CommandGroup>
+                        {favorRecipients?.map((friend) => (
+                          <CommandItem
+                            value={friend.label}
+                            key={friend.value}
+                            onSelect={() => {
+                              form.setValue("receiverId", friend.value);
+                              setOpenUserSelect(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                friend.value === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {friend.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
                 </Popover>
               </FormControl>
               <FormDescription>

@@ -50,6 +50,10 @@
   }
 }
 
+div[data-radix-popper-content-wrapper] {
+  width: calc(100% - 32px) !important;
+}
+
 
 @layer base {
   * {
