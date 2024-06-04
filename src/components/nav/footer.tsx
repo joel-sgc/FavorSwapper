@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 
 export const Footer = () => (
-  <footer className="w-full border-t-2 grid grid-cols-4 gap-4 p-4 bg-background sticky bottom-0 left-0">
+  <footer className="w-full border-t-2 grid grid-cols-4 gap-4 p-4 bg-background sticky bottom-0 left-0 z-[49]">
     <Button variant='secondary' asChild>
       <Link href='/friends'><UserPlus2/></Link>
     </Button>

@@ -41,7 +41,7 @@ model User {
   activeDaysHistory DateTime[] @default(dbgenerated("(ARRAY[]::timestamp without time zone[])::timestamp(3) without time zone[]"))
   socials           String     @default("{\"tiktok\":\"\",\"instagram\":\"\",\"twitter\":\"\"}")
 
-  favorPoints    Int          @default(5)
+  favorPoints    Int          @default(4)
   sentFavors     String       @default("[]")        // array of favor objects signifying favors. 
   receivedFavors String       @default("[]")
   favorGroups    String       @default("[]")

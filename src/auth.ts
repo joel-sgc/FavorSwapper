@@ -1,8 +1,8 @@
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import NextAuth, { DefaultSession } from "next-auth"
-import google from "next-auth/providers/google"
-import nodemailer from "next-auth/providers/nodemailer"
-import prisma from "./prisma/client"
+import nodemailer from "next-auth/providers/nodemailer";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import NextAuth, { DefaultSession } from "next-auth";
+import google from "next-auth/providers/google";
+import prisma from "./prisma/client";
 
 type socials = {
   tiktok: string,
@@ -108,8 +108,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       });
     },
 
-    // Automatically parses strings into an object
+
     session: async (message) => {
+      // Automatically parses strings into an object
       message.session.user.socials = JSON.parse(message.session.user?.socials ?? '{"tiktok":"","instagram":"","twitter":""}');
       message.session.user.friends = JSON.parse(message.session.user?.friends ?? '[]');
       message.session.user.favorGroups = JSON.parse(message.session.user.favorGroups ?? "[]")
@@ -119,6 +120,79 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       message.session.user.sentFriendRequests = JSON.parse(message.session.user.sentFriendRequests ?? "[]")
       message.session.user.receivedFriendRequests = JSON.parse(message.session.user.receivedFriendRequests ?? "[]")
+
+      // Also register daily check-ins
+
+      // 1-6 days: 1 favor point
+      // 1-3 weeks: 2 favor points
+      // 4 weeks: 3 favor points
+      const activeDays = message.session.user.activeDaysHistory;
+
+      // If no activity, add today to the list, then update user's data
+      if (activeDays.length === 0) {
+        message.session.user.activeDaysHistory.push(new Date());
+        message.session.user.activeDaysHistory.sort((a, b) => a.getTime() - b.getTime());
+        console.log(message.session.user.activeDaysHistory)
+
+        message.session.user.favorPoints += 1;
+
+        await prisma.user.update({
+          where: { id: message.session.user.id },
+          data: {
+            activeDaysHistory: { set: message.session.user.activeDaysHistory },
+            favorPoints: message.session.user.favorPoints
+          }
+        })
+
+        return;
+      }
+      
+
+      // Since we have activity, we need to check if the user has checked in today
+      const today = new Date();
+      
+      // Do nothing if the user has already checked in today
+      if (activeDays.map((date) => normalizeDate(date)).includes(normalizeDate(today))) return;
+
+      // If not, add today to the list and calculate points
+      activeDays.push(today);
+      activeDays.sort((a, b) => a.getTime() - b.getTime());
+
+      // Calculate points based off most recent period in time with no check-in gaps
+      let streak = 0;
+
+      for (let i = activeDays.length-1; i >= 1; i--) {
+        let timeDiff = activeDays[i].getTime() - activeDays[i-1].getTime();
+        let daysDiff = timeDiff / (1000 * 3600 * 24);
+
+        if (daysDiff < 2) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+
+      // Now that we calculated the streak, we can calculate the points
+      if (streak < 7) {
+        message.session.user.favorPoints += 1;
+      } else if (streak < 28) {
+        message.session.user.favorPoints += 2;
+      } else {
+        message.session.user.favorPoints += 3;
+      }
+
+      // Add today (since today hasn't been calculated for), then sort the list, then update the user's data
+      await prisma.user.update({
+        where: { id: message.session.user.id },
+        data: {
+          activeDaysHistory: { set: activeDays },
+          favorPoints: message.session.user.favorPoints
+        }
+      })
+
+      return;
     }
   },
 })
+
+const normalizeDate = ( date: Date ) => date.toISOString().split('T')[0];

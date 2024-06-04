@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "cmdk": "0.2.0",
     "date-fns": "^3.6.0",
+    "dates-between": "^5.1.0",
     "lucide-react": "^0.381.0",
     "next": "14.2.3",
     "next-auth": "^5.0.0-beta.18",
