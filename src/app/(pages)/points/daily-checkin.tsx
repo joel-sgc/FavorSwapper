@@ -19,7 +19,7 @@ export const DailyCheckin = ({
         <CardTitle>Daily Check-In</CardTitle>
         <CardDescription>Review your activity and points earned for the month.</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-8 md:grid-cols-2">
+      <CardContent className="grid gap-8 md:grid-cols-2 px-4 xs:px-6">
         <div className="grid gap-4">
           <div className="flex items-center justify-between w-full">
             <div className="text-2xl font-bold">{session?.user.favorPoints}</div>
@@ -33,7 +33,7 @@ export const DailyCheckin = ({
           <Calendar
             mode="multiple"
             selected={session?.user.activeDaysHistory.map((date: Date) => new Date(date))}
-            className="p-0 [&_td]:w-10 [&_td]:h-10 [&_th]:w-10 [&_[name=day]]:w-10 [&_[name=day]]:h-10 [&>div]:space-x-0 [&>div]:gap-6 mx-auto"
+            className="mx-auto"
           />
         </div>
 
