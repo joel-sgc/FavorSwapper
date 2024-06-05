@@ -61,7 +61,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={cn(
-        "min-h-screen flex flex-col bg-background font-sans antialiased",
+        "min-h-screen flex flex-col bg-background font-roboto antialiased",
         roboto.variable
       )}>
         <Header session={session}/>

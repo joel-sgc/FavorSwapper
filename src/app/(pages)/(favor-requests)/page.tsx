@@ -1,11 +1,7 @@
-import { auth } from "@/auth";
-import { PageTitle } from "@/components/page-title";
-import prisma from "@/prisma/client";
-import { HomeIcon } from "lucide-react";
-import { FavorComp } from "./Favor";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTrigger } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
 import { FavorForm } from "@/components/favor-form";
+import { PageTitle } from "@/components/page-title";
+import { HomeIcon } from "lucide-react";
+import { auth } from "@/auth";
 
 export default async function Home() {
   const session = await auth();
@@ -29,10 +25,7 @@ export default async function Home() {
             {/* </DrawerHeader>
           </DrawerContent>
         </Drawer> */}
-        <FavorForm friends={session?.user.friends}/>
-        {/* {receivedFavors.map((favor, index) => (
-          <FavorComp key={`favor-comp-${index}`} request={favor} index={index} />
-        ))} */}
+        <FavorForm friends={session?.user.friends} balance={session?.user.favorPoints as number}/>
     </main>
   );
 }

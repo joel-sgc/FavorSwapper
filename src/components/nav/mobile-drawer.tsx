@@ -25,7 +25,7 @@ export const MobileDrawer = ({ session }: { session: Session | null }) => {
             <Avatar className="row-span-2 size-12">
               {session ? (
                 <>
-                  <AvatarImage src={session?.user?.image as string}/>
+                  <AvatarImage src={session?.user?.image as string} referrerPolicy="no-referrer"/>
                   <AvatarFallback>{session?.user?.email?.substring(0,1).toUpperCase()}</AvatarFallback>
                 </>
               ) : (

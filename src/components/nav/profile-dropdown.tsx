@@ -18,7 +18,7 @@ export const ProfileDropdown = ({ session }: { session: Session | null }) => {
         <Avatar className="!outline-none">
           {session ? (
             <>
-              <AvatarImage src={session?.user?.image as string}/>
+              <AvatarImage src={session?.user?.image as string} referrerPolicy="no-referrer"/>
               <AvatarFallback>{session?.user?.email?.substring(0,1).toUpperCase()}</AvatarFallback>
             </>
           ) : (

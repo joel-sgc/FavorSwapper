@@ -1,34 +1,32 @@
 "use client"
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "./ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Textarea } from "./ui/textarea";
+import { Calendar } from "./ui/calendar";
+import { Button } from "./ui/button";
+import { minimalUser } from "@/auth";
+import { Input } from "./ui/input";
+import { format } from "date-fns";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { Textarea } from "./ui/textarea";
-import { Input } from "./ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Button } from "./ui/button";
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
-import { format } from "date-fns";
-import { Calendar } from "./ui/calendar";
-import { minimalUser } from "@/auth";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "./ui/command";
+import { z } from "zod";
 
-export const favorFormSchema = z.object({
-  title: z.string().min(2).max(50),
-  description: z.string().min(2).max(500),
-  favorPoints: z.coerce.number().int().min(1).max(100).finite().nonnegative(),
-  dueDate: z.date(),
-  receiverId: z.string().cuid(),
-})
-
-export const FavorForm = ({ friends, className, ...props }: { friends?: minimalUser[] ,className?: string }) => {
+export const FavorForm = ({ friends, balance, className, ...props }: { friends?: minimalUser[], balance: number, className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const favorRecipients = friends?.map((friend) => ({ label: friend.name, value: friend.id }))
+  const favorFormSchema = z.object({
+    title: z.string().min(2).max(100),
+    description: z.string().min(2).max(500),
+    favorPoints: z.coerce.number().int().min(1).finite().nonnegative(),
+    dueDate: z.date().min(new Date()),
+    receiverId: z.string().cuid(),
+  })
 
   const form = useForm<z.infer<typeof favorFormSchema>>({
     resolver: zodResolver (favorFormSchema),
@@ -39,6 +37,7 @@ export const FavorForm = ({ friends, className, ...props }: { friends?: minimalU
       dueDate: new Date(),
     },
   });
+
 
   async function onSubmit(data: z.infer<typeof favorFormSchema>) {
     setLoading(true);
@@ -54,20 +53,18 @@ export const FavorForm = ({ friends, className, ...props }: { friends?: minimalU
 
   return (
     <Form {...form}>
-      <form id="profile-form" name="profile-form" onSubmit={form.handleSubmit(onSubmit)} className={cn("grid gap-4 text-start", className)}>
+      <form {...props} onSubmit={form.handleSubmit(onSubmit)} className={cn("grid gap-4 text-start", className)}>
 
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Title</FormLabel>
               <FormControl>
                 <Input disabled={loading} placeholder="Favor Request Title" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+              <FormDescription>A brief title for the favor you are requesting.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -78,13 +75,11 @@ export const FavorForm = ({ friends, className, ...props }: { friends?: minimalU
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Favor Description</FormLabel>
               <FormControl>
                 <Textarea disabled={loading} placeholder="Favor Request Description" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your unique username.
-              </FormDescription>
+              <FormDescription>A detailed description of what you need help with.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -97,11 +92,22 @@ export const FavorForm = ({ friends, className, ...props }: { friends?: minimalU
             <FormItem>
               <FormLabel>Favor Value</FormLabel>
               <FormControl>
-                <Input disabled={loading} placeholder="1-100" {...field} />
+                <Input
+                  disabled={loading}
+                  type="tel"
+                  placeholder="1-100"
+                  autoComplete="off"
+                  {...field} 
+                  onChange={(event) => {
+                    const value = Number(event.currentTarget.value.match(/\d/g)?.join(''))
+                    const constrainedValue = Math.min(balance, Math.max(1, value))
+
+                    if (Number.isNaN(constrainedValue)) field.onChange(0)
+                    else field.onChange(constrainedValue)
+                  }}
+                  /> 
               </FormControl>
-              <FormDescription>
-                This is your email address.
-              </FormDescription>
+              <FormDescription>The amount of favor points allocated to this request. Must be within your available balance.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -136,11 +142,8 @@ export const FavorForm = ({ friends, className, ...props }: { friends?: minimalU
                     />
                   </PopoverContent>
                 </Popover>
-
               </FormControl>
-              <FormDescription>
-                This is your TikTok username.
-              </FormDescription>
+              <FormDescription>The date by which the favor needs to be completed. Penalty points will be deducted if not completed by this date.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -172,24 +175,25 @@ export const FavorForm = ({ friends, className, ...props }: { friends?: minimalU
                       <CommandInput placeholder="Search language..." />
                       <CommandEmpty>No language found.</CommandEmpty>
                       <CommandGroup>
-                        {favorRecipients?.map((friend) => (
+                        {friends?.map((friend) => (
                           <CommandItem
-                            value={friend.label}
-                            key={friend.value}
+                            value={friend.name}
+                            key={friend.id}
                             onSelect={() => {
-                              form.setValue("receiverId", friend.value);
+                              form.setValue("receiverId", friend.id);
                               setOpenUserSelect(false);
                             }}
                           >
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
-                                friend.value === field.value
+                                friend.id === field.value
                                   ? "opacity-100"
                                   : "opacity-0"
                               )}
                             />
-                            {friend.label}
+                            <img alt="" aria-hidden src={friend.image} referrerPolicy="no-referrer" className="size-8 rounded-full mr-2"/>
+                            {friend.name}
                           </CommandItem>
                         ))}
                       </CommandGroup>
@@ -197,14 +201,17 @@ export const FavorForm = ({ friends, className, ...props }: { friends?: minimalU
                   </PopoverContent>
                 </Popover>
               </FormControl>
-              <FormDescription>
-                This is your Instagram username.
-              </FormDescription>
+              <FormDescription>The name of the person you are asking to do the favor.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
-        />       
+        />
+
+        <Button type="submit" disabled={loading} className="w-full">Submit</Button>
       </form>
     </Form>
   )
 }
+
+
+// {/*console.log(field.onChange(Math.max(balance, Number())))*/}

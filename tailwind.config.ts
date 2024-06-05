@@ -25,7 +25,7 @@ const config = {
         "xs": "380px",
       },
       fontFamily: {
-        sans: ["var(--roboto)", ...fontFamily.sans],
+        roboto: ["var(--roboto)", ...fontFamily.sans],
       },
       colors: {
         border: "hsl(var(--border))",

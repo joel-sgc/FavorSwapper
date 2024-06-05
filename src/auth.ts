@@ -34,6 +34,7 @@ export type minimalUser = {
   id: string
   name: string
   image: string
+  username: string
 }
 
 type minimalFavorGroup = {
@@ -132,7 +133,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (activeDays.length === 0) {
         message.session.user.activeDaysHistory.push(new Date());
         message.session.user.activeDaysHistory.sort((a, b) => a.getTime() - b.getTime());
-        console.log(message.session.user.activeDaysHistory)
 
         message.session.user.favorPoints += 1;
 
