@@ -9,6 +9,7 @@ import { Textarea } from "./ui/textarea";
 import { Calendar } from "./ui/calendar";
 import { Button } from "./ui/button";
 import { minimalUser } from "@/auth";
+import { Session } from "next-auth";
 import { Input } from "./ui/input";
 import { format } from "date-fns";
 import { useState } from "react";
@@ -16,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export const FavorForm = ({ friends, balance, className, ...props }: { friends?: minimalUser[], balance: number, className?: string }) => {
+export const FavorForm = ({ user, friend, className, ...props }: { user: Session["user"], friend?: minimalUser, className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -35,6 +36,7 @@ export const FavorForm = ({ friends, balance, className, ...props }: { friends?:
       description: "",
       favorPoints: 1,
       dueDate: new Date(),
+      receiverId: friend?.id || "",
     },
   });
 
@@ -100,7 +102,7 @@ export const FavorForm = ({ friends, balance, className, ...props }: { friends?:
                   {...field} 
                   onChange={(event) => {
                     const value = Number(event.currentTarget.value.match(/\d/g)?.join(''))
-                    const constrainedValue = Math.min(balance, Math.max(1, value))
+                    const constrainedValue = Math.min(user.favorPoints, Math.max(1, value))
 
                     if (Number.isNaN(constrainedValue)) field.onChange(0)
                     else field.onChange(constrainedValue)
@@ -165,17 +167,17 @@ export const FavorForm = ({ friends, balance, className, ...props }: { friends?:
                       className="w-full justify-between"
                     >
                       {field.value
-                        ? friends?.find((friend) => friend?.id === field.value)?.name
+                        ? user.friends?.find((friend) => friend?.id === field.value)?.name
                         : "Select favor recipient..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0">
                     <Command>
-                      <CommandInput placeholder="Search language..." />
-                      <CommandEmpty>No language found.</CommandEmpty>
+                      <CommandInput placeholder="Search Favor Friends..." />
+                      <CommandEmpty>No Favor Friends found :&#40;</CommandEmpty>
                       <CommandGroup>
-                        {friends?.map((friend) => (
+                        {user.friends?.map((friend) => (
                           <CommandItem
                             value={friend.name}
                             key={friend.id}

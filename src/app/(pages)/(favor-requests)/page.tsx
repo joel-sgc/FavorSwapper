@@ -2,6 +2,7 @@ import { FavorForm } from "@/components/favor-form";
 import { PageTitle } from "@/components/page-title";
 import { HomeIcon } from "lucide-react";
 import { auth } from "@/auth";
+import { Session } from "next-auth";
 
 export default async function Home() {
   const session = await auth();
@@ -25,7 +26,7 @@ export default async function Home() {
             {/* </DrawerHeader>
           </DrawerContent>
         </Drawer> */}
-        <FavorForm friends={session?.user.friends} balance={session?.user.favorPoints as number}/>
+        <FavorForm user={session?.user as Session["user"]} />
     </main>
   );
 }

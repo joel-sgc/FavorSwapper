@@ -8,6 +8,14 @@ import { Friend } from "./friend";
 
 const FriendsPage = async() => {
   const session = await auth();
+
+  let defaultAccordionValue = [];
+  if (session?.user.friends.length === 0) {
+    if (session?.user.receivedFriendRequests.length > 0) {
+      defaultAccordionValue.push("friend-requests");
+    }
+  } else defaultAccordionValue.push("friends");
+
   return (
     <main className="flex-1 flex flex-col gap-4 p-4">
       <PageTitle>
@@ -19,7 +27,7 @@ const FriendsPage = async() => {
 
       <hr/>
 
-      <Accordion type="multiple" defaultValue={["friends"]}>
+      <Accordion type="multiple" defaultValue={defaultAccordionValue}>
         <AccordionItem value="friend-requests">
           <AccordionTrigger className="pt-0 font-semibold text-xl">Friend Requests</AccordionTrigger>
           <AccordionContent>
