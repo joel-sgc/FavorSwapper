@@ -1,8 +1,6 @@
-import { FavorForm } from "@/components/favor-form";
 import { PageTitle } from "@/components/page-title";
-import { HomeIcon } from "lucide-react";
+import { ArrowLeftRightIcon } from "lucide-react";
 import { auth } from "@/auth";
-import { Session } from "next-auth";
 
 export default async function Home() {
   const session = await auth();
@@ -12,21 +10,12 @@ export default async function Home() {
   return (
     <main className="flex-1 flex flex-col gap-4 p-4">
       <PageTitle>
-        <HomeIcon size={32}/>
+        <ArrowLeftRightIcon size={32}/>
         <h1>Favor Requests</h1>
       </PageTitle>
 
-        {/* <Drawer>
-          <DrawerTrigger asChild>
-            <Button>Create Favor Request</Button>
-          </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader> */}
-              
-            {/* </DrawerHeader>
-          </DrawerContent>
-        </Drawer> */}
-        <FavorForm user={session?.user as Session["user"]} />
+
+
     </main>
   );
 }

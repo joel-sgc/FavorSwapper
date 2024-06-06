@@ -1,6 +1,6 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ActivityIcon, CalendarCheckIcon, StarIcon, TrophyIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ActivityIcon, CalendarCheckIcon, StarIcon, TrophyIcon } from "lucide-react"
 
 export const DailyCheckin = ({
   session,

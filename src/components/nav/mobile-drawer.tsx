@@ -2,12 +2,40 @@
 
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from "./nav-drawer";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Menu, Settings, User } from "lucide-react";
+import { ArrowLeftRightIcon, Coins, Menu, Settings, User, UserPlus2, Users2Icon } from "lucide-react";
 import { Session } from "next-auth";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { signOut } from "next-auth/react"
 import { useState } from "react";
+
+const navLinks = [
+  {
+    icon: ArrowLeftRightIcon,
+    label: 'Requests',
+    href: '/'
+  },
+  {
+    icon: UserPlus2,
+    label: 'Friends',
+    href: '/friends'
+  },
+  {
+    icon: Users2Icon,
+    label: 'Groups',
+    href: '/groups'
+  },
+  {
+    icon: Coins,
+    label: 'Points',
+    href: '/points'
+  },
+  {
+    icon: Settings,
+    label: 'Settings',
+    href: '/settings'
+  }
+]
 
 export const MobileDrawer = ({ session }: { session: Session | null }) => {
   const [open, setOpen] = useState(false);
@@ -42,23 +70,28 @@ export const MobileDrawer = ({ session }: { session: Session | null }) => {
               <span className="text-start">Favor Points: {session?.user.favorPoints}</span>
             </div>
           </div>
+
+          <nav className="flex flex-col gap-4 pt-16">
+            {navLinks.map((link, index) => (
+              <Button asChild variant='link' key={`nav-link-${index}`} onClick={() => setOpen(false)} className="w-full text-start justify-start gap-2 text-lg">
+                <Link href={link.href}>
+                  <link.icon size={32}/>
+                  {link.label}
+                </Link>
+              </Button>
+            ))}
+          </nav>
         </DrawerHeader>
         <DrawerFooter className="flex flex-col gap-2 w-full">
           <div className="flex items-center justify-between">
-            <Button size='icon'>
-              <Link
-                href='/settings'
-                onClick={() => setOpen(false)}
-              >
+            <Button size='icon' onClick={() => setOpen(false)}>
+              <Link href='/settings'>
                 <Settings/>
               </Link>
             </Button>
 
-            <Button size='icon'>
-              <Link
-                href='/settings'
-                onClick={() => setOpen(false)}
-              >
+            <Button size='icon' onClick={() => setOpen(false)}>
+              <Link href='/settings'>
                 <Settings/>
               </Link>
             </Button>

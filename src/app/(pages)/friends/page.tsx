@@ -1,9 +1,9 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { IncomingFriendRequest, OutgoingFriendRequest } from "./friend-request";
 import { AddFriendsForm } from "./add-friends-form";
 import { PageTitle } from "@/components/page-title";
 import { UserPlus2 } from "lucide-react";
 import { auth } from "@/auth";
-import { FriendRequest } from "./friend-request";
 import { Friend } from "./friend";
 
 const FriendsPage = async() => {
@@ -28,15 +28,18 @@ const FriendsPage = async() => {
       <hr/>
 
       <Accordion type="multiple" defaultValue={defaultAccordionValue}>
-        <AccordionItem value="friend-requests">
+        <AccordionItem value="friend-requests" disabled={session?.user.receivedFriendRequests.length === 0 && session.user.sentFriendRequests.length === 0}>
           <AccordionTrigger className="pt-0 font-semibold text-xl">Friend Requests</AccordionTrigger>
           <AccordionContent>
             {session?.user.receivedFriendRequests.map((request, index) => (
-              <FriendRequest key={`friend-request-${index}`} session={session} request={request}/>
+              <IncomingFriendRequest key={`incoming-friend-request-${index}`} session={session} request={request}/>
+            ))}
+            {session?.user.sentFriendRequests.map((request, index) => (
+              <OutgoingFriendRequest key={`outgoing-friend-request-${index}`} request={request}/>
             ))}
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="friends" >
+        <AccordionItem value="friends" disabled={session?.user.friends.length === 0}>
           <AccordionTrigger className="font-semibold text-xl">Friends</AccordionTrigger>
           <AccordionContent>
             {session?.user.friends.map((friend, index) => (

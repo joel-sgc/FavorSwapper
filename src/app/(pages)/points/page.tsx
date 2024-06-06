@@ -1,6 +1,6 @@
 import { PageTitle } from "@/components/page-title";
 import { DailyCheckin } from "./daily-checkin";
-import { HandCoinsIcon } from "lucide-react";
+import { Coins } from "lucide-react";
 import { EarnAd } from "./earn-ad";
 import { auth } from "@/auth";
 
@@ -37,8 +37,8 @@ const PointsPage = async () => {
   return (
     <main className="flex-1 flex flex-col gap-4 p-4">
       <PageTitle>
-        <HandCoinsIcon size={32} />
-        <h1>Earn Points</h1>
+        <Coins size={32} />
+        <h1>Earn Favor Points</h1>
       </PageTitle>
 
       <DailyCheckin

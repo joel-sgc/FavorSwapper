@@ -62,7 +62,7 @@ export const FavorForm = ({ user, friend, className, ...props }: { user: Session
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Favor Title</FormLabel>
               <FormControl>
                 <Input disabled={loading} placeholder="Favor Request Title" {...field} />
               </FormControl>
@@ -156,7 +156,7 @@ export const FavorForm = ({ user, friend, className, ...props }: { user: Session
           name="receiverId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Instagram</FormLabel>
+              <FormLabel>Favor Recipient</FormLabel>
               <FormControl>
                 <Popover open={openUserSelect} onOpenChange={setOpenUserSelect}>
                   <PopoverTrigger asChild>

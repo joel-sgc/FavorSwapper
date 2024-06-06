@@ -37,9 +37,11 @@ export type minimalUser = {
   username: string
 }
 
-type minimalFavorGroup = {
+export type minimalFavorGroup = {
   id: string
   name: string
+  free: boolean
+  admins: minimalUser[]
 }
 
 export type friendRequest = {

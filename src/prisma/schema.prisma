@@ -14,7 +14,7 @@ datasource db {
   // title: String
   // description: String
   // favorValue: number
-  // sender: {id, name}
+  // sender: {id, name, username, image}
 
   // Next 2 are interchangable depending on whether it's a 
   
@@ -22,7 +22,7 @@ datasource db {
   // or
   // user-group 
 
-  // receiver: {id, name}
+  // receiver: {id, name, username, image}
 // }
 
 model User {
@@ -42,7 +42,7 @@ model User {
   socials           String     @default("{\"tiktok\":\"\",\"instagram\":\"\",\"twitter\":\"\"}")
 
   favorPoints    Int          @default(4)
-  sentFavors     String       @default("[]")        // array of favor objects signifying favors. 
+  sentFavors     String       @default("[]")
   receivedFavors String       @default("[]")
   favorGroups    String       @default("[]")
 
@@ -102,10 +102,12 @@ model Authenticator {
 }
 
 model FavorGroup {
-  id        String   @id @default(cuid())
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  members   String   @default("[]")     // Stringified array of user ids and names
-  favors    String   @default("[]")
+  id          String    @id @default(cuid())
+  admins      String    @default("")       // Stringified Array of admin minimalUser types
+  name        String?
+  free        Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  members     String    @default("[]")     // Stringified array of minimalUser types
+  favors      String    @default("[]")     // Stringified array of favor types
 }
