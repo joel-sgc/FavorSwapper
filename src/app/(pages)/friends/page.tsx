@@ -3,7 +3,7 @@ import { IncomingFriendRequest, OutgoingFriendRequest } from "./friend-request";
 import { AddFriendsForm } from "./add-friends-form";
 import { PageTitle } from "@/components/page-title";
 import { UserPlus2 } from "lucide-react";
-import { auth } from "@/auth";
+import { auth, minimalUser } from "@/auth";
 import { Friend } from "./friend";
 
 const FriendsPage = async() => {
@@ -42,7 +42,7 @@ const FriendsPage = async() => {
         <AccordionItem value="friends" disabled={session?.user.friends.length === 0}>
           <AccordionTrigger className="font-semibold text-xl">Friends</AccordionTrigger>
           <AccordionContent>
-            {session?.user.friends.map((friend, index) => (
+            {(session?.user?.friends as minimalUser[]).length > 0 && session?.user.friends.map((friend, index) => (
               <Friend friend={friend} key={`friend-${index}`} user={session.user}/>
             ))}
           </AccordionContent>

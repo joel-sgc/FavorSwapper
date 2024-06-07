@@ -1,13 +1,17 @@
 "use server"
 import { createId } from '@paralleldrive/cuid2';
 import prisma from "@/prisma/client";
-import { friendRequest } from '@/auth';
+import { friendRequest, minimalUser } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import { Session, User } from 'next-auth';
 
 export const sendFriendReq = async (username: string, user: Session["user"]) => {
   try {
     const newFriend = await prisma.user.findUnique({ where: { username }});
+
+    // Make sure we don't send a friend request to ourselves or someone we are already friends with
+    if (newFriend?.id === user.id) return { status: 400, message: 'You cannot send a friend request to yourself.' };
+    if (user.friends.some((friend: minimalUser) => friend.id === newFriend?.id)) return { status: 400, message: 'You are already friends with this user.' };
 
 
     // Check if they already have a pending friend request from the user
@@ -99,13 +103,13 @@ export const sendFriendReq = async (username: string, user: Session["user"]) => 
           ...user.sentFriendRequests,
           {
             ...friendReq,
-            sender: {
+            receiver: {
               id: newFriend?.id,
               name: newFriend?.name,
               image: newFriend?.image,
               username: newFriend?.username
             },
-            receiver: {
+            sender: {
               id: user.id,
               name: user.name,
               image: user.image,
@@ -157,6 +161,38 @@ export const denyFriendReq = async (id: string, user: Session["user"]) => {
   } catch (error) {
     console.log(error);
     return { status: 500, message: 'Failed to deny friend request.' }
+  } finally {
+    prisma.$disconnect()
+  }
+}
+
+export const removeFriend = async ({ friend, user }: { friend: minimalUser, user: Session["user"] }) => {
+  try {
+    const friendUser = await prisma.user.findUnique({ where: { id: friend.id } })
+
+    await prisma.user.update({
+      where: { id: friend.id },
+      data: {
+        friends: JSON.stringify(
+          JSON.parse(friendUser?.friends ?? "[]").filter((f: minimalUser) => f.id !== user.id)
+        )
+      }
+    })
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        friends: JSON.stringify(
+          user.friends.filter((f: minimalUser) => f.id !== friend.id)
+        )
+      }
+    })
+
+    revalidatePath("/friends")
+    return { status: 200, message: "Friend removed successfully" }
+  } catch (error) {
+    console.log(error)
+    return { status: 500, message: "Internal Server Error" }
   } finally {
     prisma.$disconnect()
   }

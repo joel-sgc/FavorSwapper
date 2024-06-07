@@ -48,7 +48,7 @@ model User {
 
   sentFriendRequests     String @default("[]")
   receivedFriendRequests String @default("[]")
-  friends                String @default("[{}]")
+  friends                String @default("[]")
 }
 
 model Account {

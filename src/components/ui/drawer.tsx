@@ -4,6 +4,24 @@ import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
 
 import { cn } from "@/lib/utils"
+import { cva } from "class-variance-authority"
+
+const drawerVariants = cva(
+  "fixed inset-x-0 z-50 flex border bg-background !outline-none",
+  {
+    variants: {
+      variant: {
+        top: "mb-24 top-0 h-fit flex-col-reverse rounded-b-[10px] [&>div.handle]:mx-auto [&>div.handle]:mb-2 [&>div.handle]:h-2 [&>div.handle]:w-[100px] [&>div>div.drawer-nav]:pb-2",
+        bottom: "mt-24 bottom-0 h-fit flex-col rounded-t-[10px] [&>div.handle]:mx-auto [&>div.handle]:mt-2 [&>div.handle]:h-2 [&>div.handle]:w-[100px] [&>div>div.drawer-nav]:pt-2",
+        right: "ml-auto right-0 h-screen w-fit rounded-l-[10px] [&>div.handle]:my-auto [&>div.handle]:ml-2 [&>div.handle]:w-2 [&>div.handle]:h-[100px] [&>div>div.drawer-nav]:pl-2",
+        left: "mr-24 left-0 h-screen w-fit flex-row-reverse rounded-r-[10px] [&>div.handle]:my-auto [&>div.handle]:mr-2 [&>div.handle]:w-2 [&>div.handle]:h-[100px] [&>div>div.drawer-nav]:pr-2",
+      },
+    },
+    defaultVariants: {
+      variant: "top",
+    },
+  }
+)
 
 const Drawer = ({
   shouldScaleBackground = true,
@@ -28,31 +46,33 @@ const DrawerOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Overlay
     ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
+    className={cn("fixed inset-0 z-50 bg-black/80 after:!bg-red-500", className)}
     {...props}
   />
 ))
 DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName
 
+
+interface CustomDrawerProps {
+  variant?: "top" | "bottom" | "right" | "left";
+}
+
 const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content> & CustomDrawerProps
+>(({ className, variant, children, ...props }, ref) => (
   <DrawerPortal>
     <DrawerOverlay />
     <DrawerPrimitive.Content
       ref={ref}
-      className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
-        className
-      )}
+      className={cn("right-0", drawerVariants({ variant, className }))}
       {...props}
     >
-      <div className="mx-auto mb-4 h-2 w-[100px] rounded-full bg-muted" />
-      {children}
+      <div className="handle rounded-full bg-muted" />
+      <div className="h-full w-full flex flex-col">{children}</div>
     </DrawerPrimitive.Content>
   </DrawerPortal>
-))
+));
 DrawerContent.displayName = "DrawerContent"
 
 const DrawerHeader = ({
@@ -60,7 +80,7 @@ const DrawerHeader = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)}
+    className={cn("drawer-nav grid gap-1.5 p-6 text-center sm:text-left w-full", className)}
     {...props}
   />
 )
@@ -71,7 +91,7 @@ const DrawerFooter = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+    className={cn("drawer-nav mt-auto flex flex-col gap-2 p-6", className)}
     {...props}
   />
 )

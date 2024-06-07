@@ -10,7 +10,7 @@ type socials = {
   twitter: string
 }
 
-type favor = {
+export type favor = {
   id: string
   title: string
   description: string
@@ -22,13 +22,15 @@ type favor = {
   groupId?: string
 }
 
-// type favorGroup = {
-//   id: string
-//   name?: string
-//   createdAt: Date
-//   members: DefaultSession["user"][]
-//   favors: favor[]
-// }
+export type favorGroup = {
+  id: string
+  name?: string
+  createdAt: Date
+  members: minimalUser[]
+  favors: favor[]
+  free: boolean
+  admins: minimalUser[]
+}
 
 export type minimalUser = {
   id: string
@@ -105,9 +107,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   events: {
     // Automatically assigns a username based on the user's email address
     createUser: async (message) => {
+      const username = message.user.email?.split('@')[0].toLowerCase();
+
       await prisma.user.update({
         where: { email: message.user.email as string },
-        data: { username: message.user.email?.split('@')[0].toLowerCase() as string }
+        data: { username: username?.substring(Math.min(username.length, 50)) }
       });
     },
 
@@ -152,6 +156,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       // Since we have activity, we need to check if the user has checked in today
       const today = new Date();
+      today.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
       
       // Do nothing if the user has already checked in today
       if (activeDays.map((date) => normalizeDate(date)).includes(normalizeDate(today))) return;

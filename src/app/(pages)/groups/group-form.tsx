@@ -47,7 +47,10 @@ export const CreateGroupForm = ({ session }: { session: Session | null }) => {
             <FormItem className="w-full">
               <FormLabel>Favor Group Name</FormLabel>
               <FormControl>
-                <Input disabled={loading} placeholder="My Awesome Favor Group" {...field}/>
+                <div className="flex items-center gap-2">
+                  <Input disabled={loading} placeholder="My Awesome Favor Group" {...field}/>
+                  <Button type="submit" disabled={loading} className="w-fit">Create Group</Button>
+                </div>
               </FormControl>
               <FormDescription>
                 This is your new Favor Group's name.
@@ -57,7 +60,6 @@ export const CreateGroupForm = ({ session }: { session: Session | null }) => {
           )}
         />
 
-        <Button type="submit" disabled={loading} className="w-auto mt-[32px]">Create Favor Group</Button>
       </form>
     </Form>
   )

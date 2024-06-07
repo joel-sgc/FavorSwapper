@@ -54,6 +54,11 @@ div[data-radix-popper-content-wrapper] {
   width: calc(100% - 32px) !important;
 }
 
+[vaul-drawer]::after {
+  width: 0px !important;
+  height: 0px !important;
+}
+
 
 @layer base {
   * {

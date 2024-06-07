@@ -1,13 +1,12 @@
 "use client"
-import { minimalUser } from "@/auth";
-import { FavorForm } from "@/components/favor-form";
-import { Drawer } from "@/components/nav/nav-drawer";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { removeFriend } from "@/lib/removeFriend";
+import { FavorForm } from "@/components/favor-form";
+import { removeFriend } from "@/lib/friendActions";
+import { Button } from "@/components/ui/button";
+import { minimalUser } from "@/auth";
 import { Session } from "next-auth";
 import { toast } from "sonner";
 
@@ -48,17 +47,15 @@ export const Friend = ({ friend, user }: { friend: minimalUser, user: Session["u
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-fit ml-auto mr-4">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Drawer>
-              <DrawerTrigger className="text-sm px-2 py-3">Send a Favor Request</DrawerTrigger>
-              <DrawerContent className="p-4 max-h-[90dvh]">
-                <ScrollArea className="overflow-auto">
-                  <FavorForm user={user} friend={friend} className="mx-2 my-[6px]"/>
-                </ScrollArea>
-              </DrawerContent>
-            </Drawer>
-          </DropdownMenuItem>
+          <DropdownMenuSeparator/>
+          <Drawer>
+            <DrawerTrigger className="text-sm px-2 py-3">Send a Favor Request</DrawerTrigger>
+            <DrawerContent className="p-4 max-h-[90dvh]">
+              <ScrollArea className="overflow-auto">
+                <FavorForm user={user} friend={friend} className="mx-2 my-[6px]"/>
+              </ScrollArea>
+            </DrawerContent>
+          </Drawer>
           <hr className="my-2 mx-2"/>
           <DropdownMenuItem onClick={remove}>Remove Friend</DropdownMenuItem>
         </DropdownMenuContent>

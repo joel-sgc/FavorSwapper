@@ -1,13 +1,13 @@
 "use client"
 
-import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from "./nav-drawer";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ArrowLeftRightIcon, Coins, Menu, Settings, User, UserPlus2, Users2Icon } from "lucide-react";
-import { Session } from "next-auth";
-import Link from "next/link";
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from "../ui/drawer";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { signOut } from "next-auth/react";
 import { Button } from "../ui/button";
-import { signOut } from "next-auth/react"
+import { Session } from "next-auth";
 import { useState } from "react";
+import Link from "next/link";
 
 const navLinks = [
   {
@@ -45,8 +45,8 @@ export const MobileDrawer = ({ session }: { session: Session | null }) => {
       <DrawerTrigger className="md:hidden">
         <Menu className="h-10 w-auto"/>
       </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="flex flex-col gap-4">
+      <DrawerContent variant="left">
+        <DrawerHeader className="flex flex-col gap-4 pr-2">
           <h1 className="text-xl font-semibold underline text-primary">DACS Favor Swapper</h1>
 
           <div className="grid grid-cols-[48px_auto] gap-2">
@@ -82,7 +82,7 @@ export const MobileDrawer = ({ session }: { session: Session | null }) => {
             ))}
           </nav>
         </DrawerHeader>
-        <DrawerFooter className="flex flex-col gap-2 w-full">
+        <DrawerFooter className="flex flex-col gap-2 w-full pr-2">
           <div className="flex items-center justify-between">
             <Button size='icon' onClick={() => setOpen(false)}>
               <Link href='/settings'>
