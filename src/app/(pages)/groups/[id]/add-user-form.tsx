@@ -10,6 +10,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { FavorGroup } from "@prisma/client";
+import { addToGroup } from '@/lib/groupActions';
 
 export const friendFormSchema = z.object({
   username: z.string().min(2).max(50).toLowerCase().trim().refine((value) => value.split(' ').join('')),
@@ -32,15 +33,16 @@ export const AddUserToGroupForm = ({ group, session }: { group: FavorGroup, sess
   async function onSubmit(data: z.infer<typeof friendFormSchema>) {
     setLoading(true);
     
-    const res = await sendFriendReq(
-      data.username,
-      session?.user as Session["user"]
-    );
+    const res = await addToGroup({
+      groupId: group.id,
+      username: data.username,
+      user: session?.user as Session["user"]
+    });
 
     setLoading(false);
 
     if (res.status === 200) {
-      toast.success('Friend request sent.');
+      toast.success('Added user to Favor Group.');
       form.reset();
     } else {
       toast.error(res.message);
@@ -57,17 +59,19 @@ export const AddUserToGroupForm = ({ group, session }: { group: FavorGroup, sess
             <FormItem className="w-full">
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input disabled={loading} placeholder="john_doe" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 20))}}/>
+                <div className='flex gap-2'>
+                  <Input disabled={loading} placeholder="john_doe" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 20))}}/>
+                  <Button type="submit" disabled={loading} className="w-fit">Add User</Button>
+                </div>
               </FormControl>
               <FormDescription>
-                This is your new friend's username.
+                This is the new member's username.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" disabled={loading} className="w-auto mt-[32px]">Add Friend</Button>
       </form>
     </Form>
   )
