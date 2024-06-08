@@ -42,7 +42,7 @@ export const sendFriendReq = async (username: string, user: Session["user"]) => 
         data: {
           sentFriendRequests: JSON.stringify(
             (JSON.parse(newFriend?.sentFriendRequests ?? "[]") as unknown as friendRequest[]).map((req: friendRequest) => {
-              if (req.sender.id === user.id && req.status === 'PENDING') return undefined;
+              if (req.receiver.id === user.id && req.status === 'PENDING') return undefined;
               return req;
             }).filter((req?: friendRequest) => req !== undefined && req !== null)
           ),

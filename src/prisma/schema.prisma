@@ -105,6 +105,7 @@ model FavorGroup {
   id          String    @id @default(cuid())
   admins      String    @default("")       // Stringified Array of admin minimalUser types
   name        String?
+  image       String?   @default("")
   free        Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

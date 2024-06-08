@@ -30,19 +30,19 @@ const FriendsPage = async() => {
       <Accordion type="multiple" defaultValue={defaultAccordionValue}>
         <AccordionItem value="friend-requests" disabled={session?.user.receivedFriendRequests.length === 0 && session.user.sentFriendRequests.length === 0}>
           <AccordionTrigger className="pt-0 font-semibold text-xl">Friend Requests</AccordionTrigger>
-          <AccordionContent>
-            {session?.user.receivedFriendRequests.map((request, index) => (
+          <AccordionContent className="grid gap-4">
+            {session && session?.user.receivedFriendRequests.map((request, index) => (
               <IncomingFriendRequest key={`incoming-friend-request-${index}`} session={session} request={request}/>
             ))}
-            {session?.user.sentFriendRequests.map((request, index) => (
+            {session && session?.user.sentFriendRequests.map((request, index) => (
               <OutgoingFriendRequest key={`outgoing-friend-request-${index}`} request={request}/>
             ))}
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="friends" disabled={session?.user.friends.length === 0}>
           <AccordionTrigger className="font-semibold text-xl">Friends</AccordionTrigger>
-          <AccordionContent>
-            {(session?.user?.friends as minimalUser[]).length > 0 && session?.user.friends.map((friend, index) => (
+          <AccordionContent className="grid gap-4">
+            {session && (session?.user?.friends as minimalUser[]).length > 0 && session?.user.friends.map((friend, index) => (
               <Friend friend={friend} key={`friend-${index}`} user={session.user}/>
             ))}
           </AccordionContent>

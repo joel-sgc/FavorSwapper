@@ -4,6 +4,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FavorGroup } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { Textarea } from "./ui/textarea";
 import { Calendar } from "./ui/calendar";
@@ -17,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export const FavorForm = ({ user, friend, className, ...props }: { user: Session["user"], friend?: minimalUser, className?: string }) => {
+export const FavorForm = ({ user, friend, group, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +37,7 @@ export const FavorForm = ({ user, friend, className, ...props }: { user: Session
       description: "",
       favorPoints: 1,
       dueDate: new Date(),
-      receiverId: friend?.id || "",
+      receiverId: friend?.id || group?.id || "",
     },
   });
 
@@ -135,12 +136,11 @@ export const FavorForm = ({ user, friend, className, ...props }: { user: Session
                       {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent className="w-min ml-2">
                     <Calendar
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      initialFocus
                     />
                   </PopoverContent>
                 </Popover>
@@ -158,7 +158,7 @@ export const FavorForm = ({ user, friend, className, ...props }: { user: Session
             <FormItem>
               <FormLabel>Favor Recipient</FormLabel>
               <FormControl>
-                <Popover open={openUserSelect} onOpenChange={setOpenUserSelect}>
+                <Popover open={(group ? false : openUserSelect) as boolean} onOpenChange={setOpenUserSelect}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -166,9 +166,11 @@ export const FavorForm = ({ user, friend, className, ...props }: { user: Session
                       aria-expanded={openUserSelect}
                       className="w-full justify-between"
                     >
-                      {field.value
-                        ? user.friends?.find((friend) => friend?.id === field.value)?.name
-                        : "Select favor recipient..."}
+                      {!group ? (
+                        field.value
+                          ? user.friends?.find((friend) => friend?.id === field.value)?.name
+                          : "Select favor recipient..."
+                      ) : group.name}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -203,7 +205,7 @@ export const FavorForm = ({ user, friend, className, ...props }: { user: Session
                   </PopoverContent>
                 </Popover>
               </FormControl>
-              <FormDescription>The name of the person you are asking to do the favor.</FormDescription>
+              <FormDescription>The name of the {group ? 'Favor Group' : 'Favor Friend'} you are asking to do the favor.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -214,6 +216,3 @@ export const FavorForm = ({ user, friend, className, ...props }: { user: Session
     </Form>
   )
 }
-
-
-// {/*console.log(field.onChange(Math.max(balance, Number())))*/}

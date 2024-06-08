@@ -25,6 +25,7 @@ export type favor = {
 export type favorGroup = {
   id: string
   name?: string
+  image?: string
   createdAt: Date
   members: minimalUser[]
   favors: favor[]
@@ -43,6 +44,7 @@ export type minimalFavorGroup = {
   id: string
   name: string
   free: boolean
+  image: string
   admins: minimalUser[]
 }
 
