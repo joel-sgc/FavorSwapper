@@ -13,9 +13,12 @@ import { useForm } from "react-hook-form";
 import { Session } from "next-auth";
 import { useState } from "react";
 import { toast } from "sonner";
+import { uploadImage } from "@/lib/uploadImage";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 export const profileFormSchema = z.object({
   name: z.string().min(2).max(50),
+  image: z.string().optional(),
   email: z.string().email().readonly(),
   username: z.string().trim().toLowerCase()
              .min(2, { message: 'Username must be at least 2 characters long.' })
@@ -28,6 +31,7 @@ export const profileFormSchema = z.object({
 
 export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
   const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState<File | null>();
 
   const form = useForm<z.infer<typeof profileFormSchema>>({
     resolver: zodResolver (profileFormSchema),
@@ -48,7 +52,16 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
 
   async function onSubmit(data: z.infer<typeof profileFormSchema>) {
     setLoading(true);
-    const res = await UpdateProfile(user?.email as string, data);
+    let imageUrl;
+
+    if (file) {  
+      const formData = new FormData();
+      formData.append("image", file as File);
+
+      imageUrl = await uploadImage( formData );
+    }
+
+    const res = await UpdateProfile(user?.email as string, { ...data, image: imageUrl?.data });
     setLoading(false);
 
     if (res.status === 200) {
@@ -72,11 +85,22 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
             <div className="col-span-2">
               <img src={user?.image as string} alt='Profile picture' className="w-2/3 mx-auto aspect-square text-center italic leading-[100px] rounded-full border-2"/>
 
-              <div className="space-y-2">
-                <Label>Profile Picture</Label>
-                <Input disabled={loading} type="file" name="image" />
-                <p className="text-sm text-muted-foreground">This is your Profile Picture.</p>
-              </div>
+              <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Profile Picture</FormLabel>
+                  <FormControl>
+                    <ImageUpload disabled={loading} {...field} file={file} onChange={(e) => setFile((e.target.files as FileList)[0])}/>
+                  </FormControl>
+                  <FormDescription>
+                    This is your Profile Picture.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             </div>
 
             <FormField

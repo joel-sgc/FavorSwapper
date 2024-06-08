@@ -1,16 +1,15 @@
 "use client"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { sendFriendReq } from "@/lib/friendActions";
 import { Button } from "@/components/ui/button";
+import { addToGroup } from '@/lib/groupActions';
 import { Input } from "@/components/ui/input";
+import { FavorGroup } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { Session } from "next-auth";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { FavorGroup } from "@prisma/client";
-import { addToGroup } from '@/lib/groupActions';
 
 export const friendFormSchema = z.object({
   username: z.string().min(2).max(50).toLowerCase().trim().refine((value) => value.split(' ').join('')),
@@ -57,7 +56,7 @@ export const AddUserToGroupForm = ({ group, session }: { group: FavorGroup, sess
           name="username"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Add User to Favor Group</FormLabel>
               <FormControl>
                 <div className='flex gap-2'>
                   <Input disabled={loading} placeholder="john_doe" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 20))}}/>

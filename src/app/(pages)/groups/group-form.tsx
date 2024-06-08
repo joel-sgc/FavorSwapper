@@ -10,21 +10,22 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export const friendFormSchema = z.object({
+export const groupFormSchema = z.object({
   name: z.string().min(2).max(50).trim(),
+  image: z.any(),
 });
 
 export const CreateGroupForm = ({ session }: { session: Session | null }) => {
   const [loading, setLoading] = useState(false);
   
-  const form = useForm<z.infer<typeof friendFormSchema>>({
-    resolver: zodResolver (friendFormSchema),
+  const form = useForm<z.infer<typeof groupFormSchema>>({
+    resolver: zodResolver (groupFormSchema),
     defaultValues: {
       name: "",
     },
   });
 
-  async function onSubmit(data: z.infer<typeof friendFormSchema>) {
+  async function onSubmit(data: z.infer<typeof groupFormSchema>) {
     setLoading(true);
     const res = await createGroup({ groupName: data.name, user: session?.user as Session["user"]});
     setLoading(false);

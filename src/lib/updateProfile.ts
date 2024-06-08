@@ -10,6 +10,7 @@ export const UpdateProfile = async ( email: string, data: z.infer<typeof profile
       where: { email },
       data: {
         name: data.name,
+        image: data.image,
         username: data.username,
         socials: JSON.stringify({
           tiktok: data.tiktok,

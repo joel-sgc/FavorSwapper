@@ -11,10 +11,10 @@ const drawerVariants = cva(
   {
     variants: {
       variant: {
-        top: "mb-24 top-0 h-fit flex-col-reverse rounded-b-[10px] [&>div.handle]:mx-auto [&>div.handle]:mb-2 [&>div.handle]:h-2 [&>div.handle]:w-[100px] [&>div>div.drawer-nav]:pb-2",
-        bottom: "mt-24 bottom-0 h-fit flex-col rounded-t-[10px] [&>div.handle]:mx-auto [&>div.handle]:mt-2 [&>div.handle]:h-2 [&>div.handle]:w-[100px] [&>div>div.drawer-nav]:pt-2",
-        right: "ml-24 right-0 h-screen w-fit rounded-l-[10px] [&>div.handle]:my-auto [&>div.handle]:ml-2 [&>div.handle]:w-2 [&>div.handle]:h-[100px] [&>div>div.drawer-nav]:pl-2",
-        left: "mr-24 left-0 h-screen w-fit flex-row-reverse rounded-r-[10px] [&>div.handle]:my-auto [&>div.handle]:mr-2 [&>div.handle]:w-2 [&>div.handle]:h-[100px] [&>div>div.drawer-nav]:pr-2",
+        top: "mb-24 top-0 h-fit flex-col-reverse rounded-b-[10px] [&>div.handle]:mx-auto [&>div.handle]:mb-2 [&>div.handle]:h-2 [&>div.handle]:w-[100px] [&>div>div.drawer-nav]:pb-4",
+        bottom: "mt-24 bottom-0 h-fit flex-col rounded-t-[10px] [&>div.handle]:mx-auto [&>div.handle]:mt-2 [&>div.handle]:h-2 [&>div.handle]:w-[100px] [&>div>div.drawer-nav]:pt-4",
+        right: "ml-24 right-0 h-screen w-fit rounded-l-[10px] [&>div.handle]:my-auto [&>div.handle]:ml-2 [&>div.handle]:w-2 [&>div.handle]:h-[100px] [&>div>div.drawer-nav]:pl-4",
+        left: "mr-24 left-0 h-screen w-fit flex-row-reverse rounded-r-[10px] [&>div.handle]:my-auto [&>div.handle]:mr-2 [&>div.handle]:w-2 [&>div.handle]:h-[100px] [&>div>div.drawer-nav]:pr-4",
       },
     },
     defaultVariants: {

@@ -102,18 +102,24 @@ export const createGroup = async ({ groupName, user }: { groupName: string, user
 
 export const addToGroup = async ({ groupId, username, user }: { groupId: string, username: string, user: Session["user"] | null }) => {
   try {
+    // Check if user is logged in
     if (!user) return { status: 401, message: "You must be logged in to add a user to a group." };
 
+    // Check if group exists
     const group = await prisma.favorGroup.findUnique({ where: { id: groupId }});
     if (!group) return { status: 404, message: "Group not found." };
 
-    const userToAdd = await prisma.user.findFirst({ where: { username: username }});
+    // Check if new user exists
+    const userToAdd = await prisma.user.findFirst({ where: { username }});
     if (!userToAdd) return { status: 404, message: "User not found." };
 
+    // Check if user is an admin of the group
     if (!(JSON.parse(group.admins) as minimalUser[]).some((admin) => admin.id === user.id)) return { status: 403, message: "You must be an admin of the group to add a user." };
 
+    // Check if new user is already in the group
     if ((JSON.parse(group.members) as minimalUser[]).some((member) => member.id === userToAdd.id)) return { status: 400, message: "User is already in the group." };
 
+    // Add new user to group's DB data
     await prisma.favorGroup.update({
       where: { id: groupId },
       data: { members: JSON.stringify([
@@ -127,9 +133,56 @@ export const addToGroup = async ({ groupId, username, user }: { groupId: string,
       ])}
     });
 
+    // Add group to new user's DB data
+    await prisma.user.update({
+      where: { username },
+      data: {
+        favorGroups: JSON.stringify([
+          ...JSON.parse(userToAdd.favorGroups),
+          {
+            id: groupId,
+            name: group.name,
+            free: group.free,
+            admins: JSON.parse(group.admins)
+          }
+        ])
+      }
+    })
+
     revalidatePath('/groups', 'layout');
 
     return { status: 200, message: "User added to group." };
+  } catch (error) {
+    console.error(error);
+    return { status: 500, message: "Something went wrong, please try again later." };
+  } finally {
+    prisma.$disconnect();
+  }
+}
+
+export const updateGroup = async ({ groupId, data, user }: { groupId: string, data: { name?: string, image?: string }, user: Session["user"] }) => {
+  try {
+    // Check if user is logged in
+    if (!user) return { status: 401, message: "You must be logged in to update a group." };
+
+    // Check if group exists
+    const group = await prisma.favorGroup.findUnique({ where: { id: groupId }});
+    if (!group) return { status: 404, message: "Group not found." };
+
+    // Check if user is an admin of the group
+    if (!(JSON.parse(group.admins) as minimalUser[]).some((admin) => admin.id === user.id)) return { status: 403, message: "You must be an admin of the group to update it." };
+
+    // Update group
+    await prisma.favorGroup.update({
+      where: { id: groupId },
+      data: {
+        name: data.name ?? group.name,
+        image: data.image ?? group.image
+      }
+    });
+
+    revalidatePath('/groups', 'layout');
+    return { status: 200, message: "Group updated." };
   } catch (error) {
     console.error(error);
     return { status: 500, message: "Something went wrong, please try again later." };
