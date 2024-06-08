@@ -1,19 +1,29 @@
-import { minimalUser } from "@/auth";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from "@/components/ui/drawer";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { FavorGroup } from "@prisma/client";
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from "@/components/ui/drawer";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronLeftIcon, PencilIcon } from "lucide-react";
-import { ReactNode } from "react";
 import { AddUserToGroupForm } from "./add-user-form";
-import { Session } from "next-auth";
+import { DeleteGroup } from "./delete-group-form";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { EditGroup } from "./edit-group-form";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { FavorGroup } from "@prisma/client";
+import { minimalUser } from "@/auth";
+import prisma from "@/prisma/client";
+import { Session } from "next-auth";
+import { ReactNode } from "react";
 
-export const GroupInfoDrawer = ({ session, group, children, ...props }: { session: Session | null, group?: FavorGroup | null, children: ReactNode }) => {
-  const members = JSON.parse(group?.members as string) as minimalUser[];
+export const GroupInfoDrawer = async ({ session, group, children, ...props }: { session: Session | null, group?: FavorGroup | null, children: ReactNode }) => {
+  const localMembers = JSON.parse(group?.members as string) as minimalUser[];
+  const dbMembers = await prisma.user.findMany({ where: { id: { in: localMembers.map(member => member.id) }}});
+
+  const members = dbMembers.map((member) => ({
+    id: member.id,
+    name: member.name,
+    username: member.username,
+    image: member.image,
+  })) as minimalUser[];
+
   const admins = JSON.parse(group?.admins as string) as minimalUser[];
 
   return (
@@ -28,7 +38,7 @@ export const GroupInfoDrawer = ({ session, group, children, ...props }: { sessio
               </Button>
             </DrawerClose>
 
-            <Avatar className="size-32 mx-auto">
+            <Avatar className="size-32 mx-auto rounded-lg">
               <AvatarImage src={group?.image as string} alt="" aria-hidden referrerPolicy="no-referrer"/>
               <AvatarFallback className="text-3xl">{group?.name?.substring(0,3).trim()}</AvatarFallback>
             </Avatar>
@@ -48,14 +58,7 @@ export const GroupInfoDrawer = ({ session, group, children, ...props }: { sessio
                 <DropdownMenuItem>Leave Group</DropdownMenuItem>
                 <DropdownMenuSeparator/>
                 <DropdownMenuItem asChild>
-                  <Dialog>
-                    <DialogTrigger className="py-1.5 px-2 text-sm cursor-default">Delete Group</DialogTrigger>
-                    <DialogContent className="w-fit">
-                      <DialogHeader>
-                        <DialogTitle>Are you sure?</DialogTitle>
-                      </DialogHeader>
-                    </DialogContent>
-                  </Dialog>
+                  <DeleteGroup user={session?.user as Session["user"]} groupId={group?.id as string} />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

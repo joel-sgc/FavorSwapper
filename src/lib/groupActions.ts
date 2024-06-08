@@ -1,8 +1,8 @@
 "use server"
 import { minimalFavorGroup, minimalUser } from "@/auth";
+import { revalidatePath } from "next/cache";
 import prisma from "@/prisma/client";
 import { Session } from "next-auth";
-import { revalidatePath } from "next/cache";
 
 export const createGroup = async ({ groupName, user }: { groupName: string, user: Session["user"] }) => {
   try {
@@ -189,4 +189,46 @@ export const updateGroup = async ({ groupId, data, user }: { groupId: string, da
   } finally {
     prisma.$disconnect();
   }
+}
+
+export const deleteGroup = async ({ groupId, user }: { groupId: string, user: Session["user"] }) => {
+  try {
+    // Check if user is logged in
+    if (!user) return { status: 401, message: "You must be logged in to delete a group." };
+
+    // Check if group exists
+    const group = await prisma.favorGroup.findUnique({ where: { id: groupId }});
+    if (!group) return { status: 404, message: "Group not found." };
+
+    // Check if user is an admin of the group
+    if (!(JSON.parse(group.admins) as minimalUser[]).some((admin) => admin.id === user.id)) return { status: 403, message: "You must be an admin of the group to delete it." };
+
+    // Delete group
+    await prisma.favorGroup.delete({ where: { id: groupId }});
+
+    const groupUsers = await prisma.user.findMany({ where: { id: { in: (JSON.parse(group.members) as minimalUser[]).map((m) => m.id ) }}})
+    const updatePromises = groupUsers.map((user) => {
+      const data = (JSON.parse(user.favorGroups) as minimalFavorGroup[]).filter((group) => group.id !== groupId);
+
+      if (data) {
+        return prisma.user.update({
+          where: { id: user.id },
+          data: {
+            favorGroups: JSON.stringify(data)
+          }
+        })
+      }
+    });
+
+    await Promise.all(updatePromises);
+
+    revalidatePath('/groups', 'layout');
+    return { status: 200, message: "Group deleted." };
+  } catch (error) {
+    console.error(error);
+    return { status: 500, message: "Something went wrong, please try again later." };
+  } finally {
+    prisma.$disconnect();
+  }
+
 }

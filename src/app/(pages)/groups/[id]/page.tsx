@@ -14,6 +14,8 @@ import Link from "next/link";
 
 const GroupPage = async ({ params }: { params: { id: string }}) => {
   const group = await prisma.favorGroup.findUnique({ where: { id: params.id }});
+  if (!group) return redirect('/groups');
+
   const session = await auth();
 
   // Check to make sure we are within the group

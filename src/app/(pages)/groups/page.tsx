@@ -1,11 +1,12 @@
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PageTitle } from "@/components/page-title";
-import { Users2Icon } from "lucide-react";
 import { auth, favor, minimalUser } from "@/auth";
 import { CreateGroupForm } from "./group-form";
-import Link from "next/link";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Users2Icon } from "lucide-react";
 import prisma from "@/prisma/client";
+import Link from "next/link";
 
 const GroupsPage = async () => {
   const session = await auth();
@@ -25,8 +26,13 @@ const GroupsPage = async () => {
           
           return (
           <Link key={index} href={`/groups/${group.id}`}>
-            <Card key={`group-link-${index}`}>
-              <CardHeader>
+            <Card key={`group-link-${index}`} className="flex items-center justify-start">
+              <Avatar className="size-14 ml-6 rounded-lg">
+                <AvatarImage src={group?.image as string} alt="" aria-hidden referrerPolicy="no-referrer"/>
+                <AvatarFallback className="text-3xl">{group?.name?.substring(0,3).trim()}</AvatarFallback>
+              </Avatar>
+
+              <CardHeader className="flex-1 pl-2">
                 <CardTitle className="flex justify-between text-xl">
                   <span>{group.name}</span>
 

@@ -1,6 +1,7 @@
 "use server"
 
 import { profileFormSchema } from "@/app/(pages)/settings/profile-form";
+import { revalidatePath } from "next/cache";
 import prisma from "@/prisma/client";
 import { z } from "zod";
 
@@ -20,6 +21,7 @@ export const UpdateProfile = async ( email: string, data: z.infer<typeof profile
       },
     });
 
+    revalidatePath('/', 'layout');
     return { status: 200, message: 'Profile updated successfully.' };
   } catch (error) {
     // Find out what the error is
