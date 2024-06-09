@@ -14,15 +14,17 @@ import { Session } from "next-auth";
 import { Input } from "./ui/input";
 import { format } from "date-fns";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, minifyUser } from "@/lib/utils";
 import { toast } from "sonner";
 import { z } from "zod";
+import { sendFavorReq } from "@/lib/sendFavorReq";
 
 export const FavorForm = ({ user, friend, group, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const favorFormSchema = z.object({
+    id: z.string().optional(),
     title: z.string().min(2).max(100),
     description: z.string().min(2).max(500),
     favorPoints: z.coerce.number().int().min(1).finite().nonnegative(),
@@ -44,10 +46,24 @@ export const FavorForm = ({ user, friend, group, className, ...props }: { user: 
 
   async function onSubmit(data: z.infer<typeof favorFormSchema>) {
     setLoading(true);
-    const res = {status: 200, message: ''}
+    const res = await sendFavorReq({
+      favor: {
+        id: "",
+        createdAt: new Date(),
+        title: data.title,
+        description: data.description,
+        favorValue: data.favorPoints,
+        dueDate: data.dueDate,
+        receiver: friend,
+        groupId: group?.id,
+        sender: minifyUser(user) as minimalUser
+      },
+      user
+    })
     setLoading(false);
 
     if (res.status === 200) {
+      form.reset();
       toast.success('Profile updated successfully.');
     } else {
       toast.error(res.message);
@@ -65,7 +81,7 @@ export const FavorForm = ({ user, friend, group, className, ...props }: { user: 
             <FormItem>
               <FormLabel>Favor Title</FormLabel>
               <FormControl>
-                <Input disabled={loading} placeholder="Favor Request Title" {...field} />
+                <Input disabled={loading} autoComplete="off" placeholder="Favor Request Title" {...field} />
               </FormControl>
               <FormDescription>A brief title for the favor you are requesting.</FormDescription>
               <FormMessage />
@@ -80,7 +96,7 @@ export const FavorForm = ({ user, friend, group, className, ...props }: { user: 
             <FormItem>
               <FormLabel>Favor Description</FormLabel>
               <FormControl>
-                <Textarea disabled={loading} placeholder="Favor Request Description" {...field} />
+                <Textarea disabled={loading} autoComplete="off" placeholder="Favor Request Description" {...field} />
               </FormControl>
               <FormDescription>A detailed description of what you need help with.</FormDescription>
               <FormMessage />
@@ -176,7 +192,7 @@ export const FavorForm = ({ user, friend, group, className, ...props }: { user: 
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0">
                     <Command>
-                      <CommandInput placeholder="Search Favor Friends..." />
+                      <CommandInput autoComplete="off" placeholder="Search Favor Friends..." />
                       <CommandEmpty>No Favor Friends found :&#40;</CommandEmpty>
                       <CommandGroup>
                         {user.friends?.map((friend) => (

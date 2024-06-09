@@ -110,7 +110,7 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="John Doe" {...field} />
+                    <Input disabled={loading} autoComplete="off" placeholder="John Doe" {...field} />
                   </FormControl>
                   <FormDescription>
                     This is your public display name.
@@ -127,7 +127,7 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="john_doe" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 20))}}/>
+                    <Input disabled={loading} placeholder="john_doe" autoComplete="off" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 20))}}/>
                   </FormControl>
                   <FormDescription>
                     This is your unique username.
@@ -144,7 +144,7 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
                 <FormItem className="col-span-2">
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="johndoe@email.com" readOnly disabled {...field} />
+                    <Input placeholder="johndoe@email.com" autoComplete="off" readOnly disabled {...field} />
                   </FormControl>
                   <FormDescription>
                     This is your email address.
@@ -162,7 +162,7 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
                   <FormItem>
                     <FormLabel>TikTok</FormLabel>
                     <FormControl>
-                      <Input disabled={loading} placeholder="@johndoe" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 24))}}/>
+                      <Input disabled={loading} placeholder="@johndoe" autoComplete="off" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 24))}}/>
                     </FormControl>
                     <FormDescription>
                       This is your TikTok username.
@@ -178,7 +178,7 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
                   <FormItem>
                     <FormLabel>Instagram</FormLabel>
                     <FormControl>
-                      <Input disabled={loading} placeholder="@johndoe" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 30))}}/>
+                      <Input disabled={loading} placeholder="@johndoe" autoComplete="off" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 30))}}/>
                     </FormControl>
                     <FormDescription>
                       This is your Instagram username.
@@ -194,7 +194,7 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
                   <FormItem>
                     <FormLabel>Twitter</FormLabel>
                     <FormControl>
-                      <Input disabled={loading} placeholder="@johndoe" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9_]+/g, 15))}}/>
+                      <Input disabled={loading} placeholder="@johndoe" autoComplete="off" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9_]+/g, 15))}}/>
                     </FormControl>
                     <FormDescription>
                       This is your Twitter username.

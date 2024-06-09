@@ -56,7 +56,10 @@ export const AddFriendsForm = ({ session }: { session: Session | null }) => {
             <FormItem className="w-full">
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input disabled={loading} placeholder="john_doe" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 20))}}/>
+                <div className="flex items-center gap-2">
+                  <Input disabled={loading} placeholder="john_doe" autoComplete="off" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 20))}}/>
+                  <Button type="submit" disabled={loading} className="w-auto">Add Friend</Button>
+                </div>
               </FormControl>
               <FormDescription>
                 This is your new friend's username.
@@ -65,8 +68,6 @@ export const AddFriendsForm = ({ session }: { session: Session | null }) => {
             </FormItem>
           )}
         />
-
-        <Button type="submit" disabled={loading} className="w-auto mt-[32px]">Add Friend</Button>
       </form>
     </Form>
   )

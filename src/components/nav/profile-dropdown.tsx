@@ -30,7 +30,7 @@ export const ProfileDropdown = ({ session }: { session: Session | null }) => {
           )}
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-fit ml-auto">
         <DropdownMenuLabel className="hidden md:block">Navigation</DropdownMenuLabel>
         <DropdownMenuSeparator className="hidden md:block" />
         <DropdownMenuItem className="hidden md:block" asChild><Link href='/friends'>Friends</Link></DropdownMenuItem>

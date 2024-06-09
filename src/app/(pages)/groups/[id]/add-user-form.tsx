@@ -59,7 +59,7 @@ export const AddUserToGroupForm = ({ group, session }: { group: FavorGroup, sess
               <FormLabel>Add User to Favor Group</FormLabel>
               <FormControl>
                 <div className='flex gap-2'>
-                  <Input disabled={loading} placeholder="john_doe" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 20))}}/>
+                  <Input disabled={loading} autoComplete="off" placeholder="john_doe" {...field} onChange={(event) => {field.onChange(normalizeUsername(event.currentTarget.value, /[^a-z0-9._]+/g, 20))}}/>
                   <Button type="submit" disabled={loading} className="w-fit">Add User</Button>
                 </div>
               </FormControl>

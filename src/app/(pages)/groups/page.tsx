@@ -29,7 +29,7 @@ const GroupsPage = async () => {
             <Card key={`group-link-${index}`} className="flex items-center justify-start">
               <Avatar className="size-14 ml-6 rounded-lg">
                 <AvatarImage src={group?.image as string} alt="" aria-hidden referrerPolicy="no-referrer"/>
-                <AvatarFallback className="text-3xl">{group?.name?.substring(0,3).trim()}</AvatarFallback>
+                <AvatarFallback className="text-3xl rounded-none">{group?.name?.substring(0,3).trim()}</AvatarFallback>
               </Avatar>
 
               <CardHeader className="flex-1 pl-2">

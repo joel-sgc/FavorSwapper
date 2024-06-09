@@ -4,7 +4,9 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { updateGroup } from "@/lib/groupActions";
 import { Button } from "@/components/ui/button";
+import { uploadImage } from "@/lib/uploadImage";
 import { groupFormSchema } from "../group-form";
 import { Input } from "@/components/ui/input";
 import { FavorGroup } from "@prisma/client";
@@ -14,8 +16,6 @@ import { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { uploadImage } from "@/lib/uploadImage";
-import { updateGroup } from "@/lib/groupActions";
 
 export const EditGroup = ({ user, group, children, ...props }: { user: Session["user"], group?: FavorGroup | null, children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
@@ -66,7 +66,7 @@ export const EditGroup = ({ user, group, children, ...props }: { user: Session["
                 <FormItem className="w-full">
                   <FormLabel>Favor Group Name</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="My Awesome Favor Group" {...field}/>
+                    <Input disabled={loading} autoComplete="off" placeholder="My Awesome Favor Group" {...field}/>
                   </FormControl>
                   <FormDescription>
                     This is your Favor Group's name.

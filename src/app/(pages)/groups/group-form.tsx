@@ -49,7 +49,7 @@ export const CreateGroupForm = ({ session }: { session: Session | null }) => {
               <FormLabel>Favor Group Name</FormLabel>
               <FormControl>
                 <div className="flex items-center gap-2">
-                  <Input disabled={loading} placeholder="My Awesome Favor Group" {...field}/>
+                  <Input disabled={loading} autoComplete="off" placeholder="My Awesome Favor Group" {...field}/>
                   <Button type="submit" disabled={loading} className="w-fit">Create Group</Button>
                 </div>
               </FormControl>

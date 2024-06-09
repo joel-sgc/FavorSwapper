@@ -4,7 +4,7 @@ import NextAuth, { DefaultSession } from "next-auth";
 import google from "next-auth/providers/google";
 import prisma from "./prisma/client";
 
-type socials = {
+export type socials = {
   tiktok: string,
   instagram: string,
   twitter: string

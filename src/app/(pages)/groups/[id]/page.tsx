@@ -72,7 +72,7 @@ const GroupPage = async ({ params }: { params: { id: string }}) => {
           </Drawer>
         </div>
       ) : (
-        <ScrollArea className="w-full h-full flex-1 border-t-2">
+        <ScrollArea className="w-full h-full flex-1 border-t-2 pt-4">
           {favors.map(favor => (
             <FavorComp favor={favor} key={`favor-${group?.id}-${favor.id}`}/>
           ))}

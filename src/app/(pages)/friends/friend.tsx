@@ -49,7 +49,7 @@ export const Friend = ({ friend, user }: { friend: minimalUser, user: Session["u
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator/>
           <Drawer>
-            <DrawerTrigger className="text-sm px-2 py-3">Send a Favor Request</DrawerTrigger>
+            <DrawerTrigger className="text-sm px-2 py-1.5">Send a Favor Request</DrawerTrigger>
             <DrawerContent className="p-4 max-h-[90dvh]">
               <ScrollArea className="overflow-auto">
                 <FavorForm user={user} friend={friend} className="mx-2 my-[6px]"/>

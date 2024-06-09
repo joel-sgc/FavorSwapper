@@ -97,7 +97,7 @@ export const MobileDrawer = ({ session }: { session: Session | null }) => {
             </Button>
           </div>
 
-          <Button className="w-full">
+          <Button className="w-full" asChild>
             <Link 
               href='/auth/login' 
               onClick={() => {

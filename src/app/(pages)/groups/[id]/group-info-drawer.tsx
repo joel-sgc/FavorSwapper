@@ -12,6 +12,7 @@ import { minimalUser } from "@/auth";
 import prisma from "@/prisma/client";
 import { Session } from "next-auth";
 import { ReactNode } from "react";
+import Link from "next/link";
 
 export const GroupInfoDrawer = async ({ session, group, children, ...props }: { session: Session | null, group?: FavorGroup | null, children: ReactNode }) => {
   const localMembers = JSON.parse(group?.members as string) as minimalUser[];
@@ -25,11 +26,16 @@ export const GroupInfoDrawer = async ({ session, group, children, ...props }: { 
   })) as minimalUser[];
 
   const admins = JSON.parse(group?.admins as string) as minimalUser[];
+  const isAdmin = admins.some((admin) => admin.id === session?.user.id);
+
+  // Weird ChatGPT sorting algorithm to sort members alphabetically and then by admin status
+  const sortedMembers = [...members.map(member => ({ ...member, isAdmin: admins.map(admin => admin.id).includes(member.id) ? 1 : 0 }))].sort((a, b) => b.isAdmin - a.isAdmin || a.name.localeCompare(b.name));
+
 
   return (
     <Drawer direction="right" {...props}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent variant="right" className="ml-0 w-screen rounded-none">
+      <DrawerContent variant="right" className="ml-0 w-screen rounded-none border-none">
         <DrawerHeader>  
           <div className="w-full grid grid-cols-[40px_1fr_40px] gap-4 justify-center">
             <DrawerClose asChild>
@@ -40,7 +46,7 @@ export const GroupInfoDrawer = async ({ session, group, children, ...props }: { 
 
             <Avatar className="size-32 mx-auto rounded-lg">
               <AvatarImage src={group?.image as string} alt="" aria-hidden referrerPolicy="no-referrer"/>
-              <AvatarFallback className="text-3xl">{group?.name?.substring(0,3).trim()}</AvatarFallback>
+              <AvatarFallback className="text-3xl rounded-none">{group?.name?.substring(0,3).trim()}</AvatarFallback>
             </Avatar>
 
             <DropdownMenu>
@@ -52,14 +58,20 @@ export const GroupInfoDrawer = async ({ session, group, children, ...props }: { 
               <DropdownMenuContent className="w-fit ml-auto mr-6">
                 <DropdownMenuLabel>Group Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator/>
-                <DropdownMenuItem asChild>
-                  <EditGroup group={group as FavorGroup} user={session?.user as Session["user"]}><div className="py-1.5 px-2 text-sm cursor-default select-none">Edit Group</div></EditGroup>
-                </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <EditGroup group={group as FavorGroup} user={session?.user as Session["user"]}><div className="py-1.5 px-2 text-sm cursor-default select-none">Edit Group</div></EditGroup>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem>Leave Group</DropdownMenuItem>
-                <DropdownMenuSeparator/>
-                <DropdownMenuItem asChild>
-                  <DeleteGroup user={session?.user as Session["user"]} groupId={group?.id as string} />
-                </DropdownMenuItem>
+                {isAdmin && (
+                  <>
+                    <DropdownMenuSeparator/>
+                    <DropdownMenuItem asChild>
+                      <DeleteGroup user={session?.user as Session["user"]} groupId={group?.id as string} />
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -69,20 +81,22 @@ export const GroupInfoDrawer = async ({ session, group, children, ...props }: { 
           {/* Members overview */}
           <div className="border-t-2 pt-2 mt-2">
             <p className="text-lg text-muted-foreground text-start w-full">{members.length} {members.length > 1 ? 'members' : 'member'}</p>
-            {members.map((member) => (
-              <Member key={`member-${member.id}-group-${group?.id}`} member={member} admins={admins}/>
+            {sortedMembers.map((member) => (
+              <Member key={`member-${member.id}-group-${group?.id}`} member={member} admins={admins} isAdmin={isAdmin}/>
             ))}
           </div>
         </DrawerHeader>
-        <DrawerFooter>
-          <AddUserToGroupForm group={group as FavorGroup} session={session}/>
-        </DrawerFooter>
+        {isAdmin && (
+          <DrawerFooter>
+            <AddUserToGroupForm group={group as FavorGroup} session={session}/>
+          </DrawerFooter>
+        )}
       </DrawerContent>
     </Drawer>
   )
 }
 
-const Member = ({ member, admins }: { member: minimalUser, admins: minimalUser[] }) => (
+const Member = ({ member, admins, isAdmin }: { member: minimalUser, admins: minimalUser[], isAdmin: boolean }) => (
   <div  className="pt-8 grid gap-2 grid-cols-[52px_1fr_40px]">
     <Avatar className="size-13 grid-rows-2">
       <AvatarImage src={member?.image} alt="" aria-hidden referrerPolicy="no-referrer"/>
@@ -107,9 +121,15 @@ const Member = ({ member, admins }: { member: minimalUser, admins: minimalUser[]
       <DropdownMenuContent className="w-fit ml-auto mr-6">
         <DropdownMenuLabel>User Actions</DropdownMenuLabel>
         <DropdownMenuSeparator/>
-        <DropdownMenuItem>View Profile</DropdownMenuItem>
-        <DropdownMenuItem>Make Admin</DropdownMenuItem>
-        <DropdownMenuItem>Kick from Group</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href={`/profile/${member.id}`}>View Profile</Link>
+        </DropdownMenuItem>
+        {isAdmin && (
+          <>
+            <DropdownMenuItem>Make Admin</DropdownMenuItem>
+            <DropdownMenuItem>Kick from Group</DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   </div>

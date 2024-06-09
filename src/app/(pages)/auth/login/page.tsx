@@ -47,7 +47,7 @@ export default async function Page() {
           }}
             className="grid gap-4 w-full"
           >
-            <Input type="email" placeholder="johndoe@email.com" name="email" required/>
+            <Input type="email" autoComplete="email" placeholder="johndoe@email.com" name="email" required/>
             <Button className="flex gap-2 hover:underline w-full">
               Sign in with Email
             </Button>
