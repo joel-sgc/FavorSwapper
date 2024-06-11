@@ -58,16 +58,17 @@ export const sendFavorReq = async ({ favor, user }: { favor: favor, user: Sessio
         where: { id: user.id },
         data: {
           sentFavors: JSON.stringify([
-            user.sentFavors,
+            ...user.sentFavors,
             favor
           ])
         }
       });
 
+      // Update recipient's received favors
       await prisma.user.update({
         where: { id: favor.receiver.id },
         data: {
-          sentFavors: JSON.stringify([
+          receivedFavors: JSON.stringify([
             ...JSON.parse(recipient.receivedFavors),
             favor
           ])

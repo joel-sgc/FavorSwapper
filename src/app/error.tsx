@@ -1,6 +1,6 @@
 "use client"
 
-const NotFound = () => (
+const NotFound = ({ error }: { error: Error }) => (
   <main className="h-[calc(100vh-83px)] grid grid-rows-2 md:flex md:justify-center ">
     <img 
       alt="Error 404"

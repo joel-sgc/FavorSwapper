@@ -13,13 +13,15 @@ import { minimalUser } from "@/auth";
 import { Session } from "next-auth";
 import { Input } from "./ui/input";
 import { format } from "date-fns";
-import { useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { cn, minifyUser } from "@/lib/utils";
 import { toast } from "sonner";
 import { z } from "zod";
 import { sendFavorReq } from "@/lib/sendFavorReq";
+import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
+import { ScrollArea } from "./ui/scroll-area";
 
-export const FavorForm = ({ user, friend, group, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, className?: string }) => {
+export const FavorForm = ({ user, friend, group, setOpen, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, setOpen?: Dispatch<SetStateAction<boolean>>, className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -63,8 +65,9 @@ export const FavorForm = ({ user, friend, group, className, ...props }: { user: 
     setLoading(false);
 
     if (res.status === 200) {
-      form.reset();
+      if (setOpen) setOpen(false);
       toast.success('Profile updated successfully.');
+      form.reset();
     } else {
       toast.error(res.message);
     }
@@ -230,5 +233,20 @@ export const FavorForm = ({ user, friend, group, className, ...props }: { user: 
         <Button type="submit" disabled={loading} className="w-full">Submit</Button>
       </form>
     </Form>
+  )
+}
+
+export const FavorFormDrawer = ({ user, friend, group, children, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, children: ReactNode, className?: string }) => {
+  const [open, setOpen] = useState(false);
+  
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger {...props} className={className}>{children}</DrawerTrigger>
+      <DrawerContent className="p-4 max-h-[90dvh]">
+        <ScrollArea className="overflow-auto">
+          <FavorForm group={group} setOpen={setOpen} user={user} friend={friend} className="mx-2 my-[6px]"/>
+        </ScrollArea>
+      </DrawerContent>
+    </Drawer>
   )
 }

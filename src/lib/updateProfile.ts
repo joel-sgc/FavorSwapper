@@ -12,6 +12,7 @@ export const UpdateProfile = async ( email: string, data: z.infer<typeof profile
       data: {
         name: data.name,
         image: data.image,
+        imageDelUrl: data.imageDelUrl,
         username: data.username,
         socials: JSON.stringify({
           tiktok: data.tiktok,
@@ -25,7 +26,8 @@ export const UpdateProfile = async ( email: string, data: z.infer<typeof profile
     return { status: 200, message: 'Profile updated successfully.' };
   } catch (error) {
     // Find out what the error is
-    if (await prisma.user.findUnique({ where: { username: data.username }})) {
+    console.error(error);
+    if (await prisma.user.findFirst({ where: { username: data.username, email: { not: email } }})) {
       return { status: 500, message: 'Username is already taken.' };
     }
 

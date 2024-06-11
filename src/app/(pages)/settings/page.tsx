@@ -7,7 +7,7 @@ const SettingsPage = async() => {
   const session = await auth();
 
   return (
-    <main className="flex-1 flex flex-col gap-4 p-4">
+    <main className="flex-1 flex flex-col gap-4 p-4 pb-[72px]">
       <PageTitle>
         <Settings size={32} />
         <h1>Settings</h1>

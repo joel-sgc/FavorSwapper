@@ -84,13 +84,13 @@ export const MobileDrawer = ({ session }: { session: Session | null }) => {
         </DrawerHeader>
         <DrawerFooter className="flex flex-col gap-2 w-full pr-2">
           <div className="flex items-center justify-between">
-            <Button size='icon' onClick={() => setOpen(false)}>
+            <Button size='icon' asChild onClick={() => setOpen(false)}>
               <Link href='/settings'>
                 <Settings/>
               </Link>
             </Button>
 
-            <Button size='icon' onClick={() => setOpen(false)}>
+            <Button size='icon' asChild onClick={() => setOpen(false)}>
               <Link href='/settings'>
                 <Settings/>
               </Link>

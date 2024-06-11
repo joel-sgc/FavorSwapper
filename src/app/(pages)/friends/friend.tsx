@@ -1,16 +1,18 @@
 "use client"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { FavorForm } from "@/components/favor-form";
+import { FavorFormDrawer } from "@/components/favor-form";
 import { removeFriend } from "@/lib/friendActions";
 import { Button } from "@/components/ui/button";
 import { minimalUser } from "@/auth";
 import { Session } from "next-auth";
 import { toast } from "sonner";
+import Link from "next/link";
+import { useState } from "react";
 
 export const Friend = ({ friend, user }: { friend: minimalUser, user: Session["user"] }) => {
+  const [open, setOpen] = useState(false);
+
   const remove = async () => {
     const res = await removeFriend({ friend, user });
 
@@ -23,7 +25,7 @@ export const Friend = ({ friend, user }: { friend: minimalUser, user: Session["u
 
   return (
     <div className="flex w-full gap-2 items-center">
-      <div className="flex-1 grid grid-cols-[48px_1fr] gap-4">
+      <Link href={`/profile/${friend.id}`} className="flex-1 grid grid-cols-[48px_1fr] gap-4">
         <Avatar>
           <AvatarImage src={friend.image} referrerPolicy="no-referrer" className="grid-rows-2 size-12"/>
           <AvatarFallback className="text-lg grid-rows-2 size-12">{friend.name.substring(0,1).toUpperCase()}</AvatarFallback>
@@ -33,9 +35,9 @@ export const Friend = ({ friend, user }: { friend: minimalUser, user: Session["u
           <span className="font-semibold">{friend.name}</span>
           <span className="text-sm text-muted-foreground">@{friend.username}</span>
         </div>
-      </div>
+      </Link>
 
-      <DropdownMenu>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button size='icon' variant="secondary">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -48,14 +50,9 @@ export const Friend = ({ friend, user }: { friend: minimalUser, user: Session["u
         <DropdownMenuContent className="w-fit ml-auto mr-4">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator/>
-          <Drawer>
-            <DrawerTrigger className="text-sm px-2 py-1.5">Send a Favor Request</DrawerTrigger>
-            <DrawerContent className="p-4 max-h-[90dvh]">
-              <ScrollArea className="overflow-auto">
-                <FavorForm user={user} friend={friend} className="mx-2 my-[6px]"/>
-              </ScrollArea>
-            </DrawerContent>
-          </Drawer>
+          <FavorFormDrawer user={user} friend={friend} className="text-sm px-2 py-1.5">
+            Send a Favor Request
+          </FavorFormDrawer>
           <hr className="my-2 mx-2"/>
           <DropdownMenuItem onClick={remove}>Remove Friend</DropdownMenuItem>
         </DropdownMenuContent>

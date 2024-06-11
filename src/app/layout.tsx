@@ -64,12 +64,12 @@ export default async function RootLayout({
         "min-h-screen flex flex-col bg-background font-roboto antialiased",
         roboto.variable
       )}>
-        {session && <Header  session={session}/>}
+        {/* Header and Footer handled in Middleware Provider */}
         <MiddlewareProvider session={session}>
+          {session && <Header session={session}/>}
           {children}
+          {session && <Footer session={session}/>}
         </MiddlewareProvider>
-        {session && <Footer />}
-      
         <Toaster richColors/>
       </body>
     </html>

@@ -13,7 +13,7 @@ const GroupsPage = async () => {
   const groups = await prisma.favorGroup.findMany({ where: { id: { in: session?.user.favorGroups.map(group => group.id) }}});
 
   return (
-    <main className="flex-1 flex flex-col gap-4 p-4">
+    <main className="flex-1 flex flex-col gap-4 p-4 pb-[72px]">
       <PageTitle>
         <Users2Icon size={32} />
         <h1>Favor Groups</h1>

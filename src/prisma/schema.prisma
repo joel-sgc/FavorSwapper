@@ -26,29 +26,31 @@ datasource db {
 // }
 
 model User {
-  id             String          @id @default(cuid())
-  name           String?
-  username       String?         @unique
-  email          String          @unique
-  emailVerified  DateTime?
-  image          String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  accounts       Account[]
-  Authenticators Authenticator[]
-  sessions       Session[]
+  id                      String          @id @default(cuid())
+  name                    String?
+  username                String?         @unique
+  email                   String          @unique
+  emailVerified           DateTime?
+  image                   String?
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+  accounts                Account[]
+  Authenticators          Authenticator[]
+  sessions                Session[]
 
-  activeDaysHistory DateTime[] @default(dbgenerated("(ARRAY[]::timestamp without time zone[])::timestamp(3) without time zone[]"))
-  socials           String     @default("{\"tiktok\":\"\",\"instagram\":\"\",\"twitter\":\"\"}")
+  imageDelUrl             String?      @default("")
 
-  favorPoints    Int          @default(4)
-  sentFavors     String       @default("[]")
-  receivedFavors String       @default("[]")
-  favorGroups    String       @default("[]")
+  activeDaysHistory       DateTime[] @default(dbgenerated("(ARRAY[]::timestamp without time zone[])::timestamp(3) without time zone[]"))
+  socials                 String     @default("{\"tiktok\":\"\",\"instagram\":\"\",\"twitter\":\"\"}")
 
-  sentFriendRequests     String @default("[]")
-  receivedFriendRequests String @default("[]")
-  friends                String @default("[]")
+  favorPoints             Int          @default(4)
+  sentFavors              String       @default("[]")
+  receivedFavors          String       @default("[]")
+  favorGroups             String       @default("[]")
+
+  sentFriendRequests      String @default("[]")
+  receivedFriendRequests  String @default("[]")
+  friends                 String @default("[]")
 }
 
 model Account {
@@ -106,6 +108,7 @@ model FavorGroup {
   admins      String    @default("")       // Stringified Array of admin minimalUser types
   name        String?
   image       String?   @default("")
+  imageDelUrl String?   @default("")
   free        Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

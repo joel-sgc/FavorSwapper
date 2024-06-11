@@ -1,26 +1,33 @@
+"use client"
 import { CalendarIcon, UserIcon } from "lucide-react";
+import { useState } from "react";
 import { favor } from "@/auth";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
 
 export const FavorComp = ({ favor, className, ...props }: { favor: favor, className?: string }) => {
+const [collapsed, setCollapsed] = useState(true);
+  
   return (
-    <div
-      {...props}
-      className="bg-card rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-md">
-      <div className="p-4 md:p-6">
-        <div className="flex items-center mb-3 md:mb-4">
-          <div className="bg-primary text-white font-bold px-3 py-1 rounded-full text-sm md:text-base">
-            {favor.favorValue}
-          </div>
-          <h2 className="text-base font-bold ml-3 md:text-lg line-clamp-2">{favor.description ?? "dwakhdwja"}</h2>
+    <Card>
+      <CardHeader onClick={() => setCollapsed(!collapsed)}>
+        <CardTitle className="flex items-center gap-2">
+          <Badge>{favor.favorValue}</Badge>
+          {favor.title}
+        </CardTitle>
+        <CardDescription className={collapsed ? 'line-clamp-2' : ''}>{favor.description}</CardDescription>
+      </CardHeader>
+      <CardFooter className="flex-col items-start gap-2">
+        <div className="flex items-center gap-2">
+          <UserIcon />
+          @{favor.sender.username}
         </div>
-        <p className="text-gray-300 line-clamp-3 mb-3 md:mb-4 text-sm md:text-base">{favor.description}</p>
-        <div className="flex items-center text-gray-400 text-sm md:text-base">
-          <CalendarIcon className="w-4 h-4 mr-2 md:w-5 md:h-5" />
-          <span>Due by {favor.dueDate.toLocaleString()}</span>
-          <UserIcon className="w-4 h-4 ml-4 mr-2 md:w-5 md:h-5" />
-          <span>@{favor.sender.username}</span>
+
+        <div className="flex items-center gap-2">
+          <CalendarIcon />
+          Due Date: {new Date(favor.dueDate).toLocaleDateString()}
         </div>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   )
 }

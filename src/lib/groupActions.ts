@@ -160,7 +160,7 @@ export const addToGroup = async ({ groupId, username, user }: { groupId: string,
   }
 }
 
-export const updateGroup = async ({ groupId, data, user }: { groupId: string, data: { name?: string, image?: string }, user: Session["user"] }) => {
+export const updateGroup = async ({ groupId, data, user }: { groupId: string, data: { name?: string, image?: string, imageDelUrl?: string }, user: Session["user"] }) => {
   try {
     // Check if user is logged in
     if (!user) return { status: 401, message: "You must be logged in to update a group." };
@@ -177,7 +177,8 @@ export const updateGroup = async ({ groupId, data, user }: { groupId: string, da
       where: { id: groupId },
       data: {
         name: data.name ?? group.name,
-        image: data.image ?? group.image
+        image: data.image ?? group.image,
+        imageDelUrl: data.imageDelUrl ?? group.imageDelUrl
       }
     });
 

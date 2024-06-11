@@ -60,13 +60,14 @@ export type friendRequest = {
 declare module "next-auth" {
   interface Session {
     user: {
-      username: string,
-      activeDaysHistory: Date[],
-      favorPoints: number,
+      username: string
+      activeDaysHistory: Date[]
+      favorPoints: number
+      imageDelUrl: string
       
       // Parsed sets
       friends: minimalUser[]
-      socials: socials,
+      socials: socials
       favorGroups: minimalFavorGroup[]
 
       sentFavors: favor[]
@@ -77,15 +78,16 @@ declare module "next-auth" {
   }
 
   interface User {
-    username: string,
-    activeDaysHistory: Date[],
-    favorPoints: number,
+    username: string
+    activeDaysHistory: Date[]
+    favorPoints: number
+    imageDelUrl: string
     
     // Stringified
     favorGroups: string     // Array of group ids and names
     sentFavors: string      // Array of favors
     receivedFavors: string  // Array of favors
-    socials: string,        // Object with socials
+    socials: string         // Object with socials
     friends: string         // Array of user IDs, names, and profile pictures
     sentFriendRequests: string
     receivedFriendRequests: string

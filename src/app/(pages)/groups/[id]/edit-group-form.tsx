@@ -4,9 +4,9 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { deleteImage } from "@/lib/imageActions";
 import { updateGroup } from "@/lib/groupActions";
 import { Button } from "@/components/ui/button";
-import { uploadImage } from "@/lib/uploadImage";
 import { groupFormSchema } from "../group-form";
 import { Input } from "@/components/ui/input";
 import { FavorGroup } from "@prisma/client";
@@ -31,31 +31,48 @@ export const EditGroup = ({ user, group, children, ...props }: { user: Session["
   });
 
   async function onSubmit(data: z.infer<typeof groupFormSchema>) {
-    setLoading(true);
-    let imageUrl;
+    try {
+      setLoading(true);
+      let imageUrl;
 
-    if (file) {  
-      const formData = new FormData();
-      formData.append("image", file as File);
+      if (file) {
+        const formData = new FormData();
+        formData.set('image', file);
+        
+        const req = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: formData
+        })
 
-      imageUrl = await uploadImage( formData );
-    }
+        const uploadRes = await req.json()
 
-    const res = await updateGroup({ groupId: group?.id as string, data: { name: data.name, image: imageUrl?.data }, user });
-    setLoading(false);
+        imageUrl = { image: uploadRes.data, imageDelUrl: uploadRes.del };
 
-    if (res.status === 200) {
-      toast.success(res.message);
-      setOpen(false);
-      setFile(null);
-    } else {
-      toast.error(res.message);
+        // Delete old image
+        if (group?.imageDelUrl) {
+          await deleteImage(group?.imageDelUrl);
+        }
+      }
+
+      const res = await updateGroup({ groupId: group?.id as string, data: { name: data.name, ...imageUrl }, user });
+      setLoading(false);
+
+      if (res.status === 200) {
+        toast.success(res.message);
+        setOpen(false);
+        setFile(null);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error(JSON.stringify(error));
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="w-max max-w-[90dvw]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">

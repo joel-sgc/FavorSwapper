@@ -21,7 +21,7 @@ const ProfilePage = async ({ params }: { params: { id: string }}) => {
   if (!user) redirect('/');
 
   return (
-    <main className="flex-1 flex flex-col gap-4">
+    <main className="flex-1 flex flex-col gap-4 pb-[72px]">
       <div className="w-full bg-secondary h-24"/>
       <div className="flex flex-col items-center px-4">
         <Avatar className="size-32 -mt-12 mb-2">

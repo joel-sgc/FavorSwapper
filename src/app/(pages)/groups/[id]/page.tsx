@@ -26,7 +26,7 @@ const GroupPage = async ({ params }: { params: { id: string }}) => {
   const favors = JSON.parse(group?.favors as string) as favor[]
 
   if (isMember) return (
-    <main className="flex-1 flex flex-col gap-4 p-4">
+    <main className="flex-1 flex flex-col gap-4 p-4 pb-[72px]">
       <PageTitle className="justify-between">
         <div className="flex items-center gap-2">
           <Button variant='secondary' size='icon' className="mr-2" asChild>

@@ -5,20 +5,20 @@ import { z } from "zod";
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { UpdateProfile } from "@/lib/updateProfile";
+import { deleteImage, modifyFile, uploadImage } from "@/lib/imageActions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { Session } from "next-auth";
 import { useState } from "react";
 import { toast } from "sonner";
-import { uploadImage } from "@/lib/uploadImage";
-import { ImageUpload } from "@/components/ui/image-upload";
 
 export const profileFormSchema = z.object({
   name: z.string().min(2).max(50),
   image: z.string().optional(),
+  imageDelUrl: z.string().optional(),
   email: z.string().email().readonly(),
   username: z.string().trim().toLowerCase()
              .min(2, { message: 'Username must be at least 2 characters long.' })
@@ -56,12 +56,18 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
 
     if (file) {  
       const formData = new FormData();
-      formData.append("image", file as File);
+      formData.append("image", await modifyFile(file) as File);
 
-      imageUrl = await uploadImage( formData );
+      const uploadRes = await uploadImage( formData );
+      imageUrl = { image: uploadRes.data, imageDelUrl: uploadRes.del };
+
+      // Delete old image
+      if (user?.imageDelUrl) {
+        await deleteImage(user?.imageDelUrl);
+      }
     }
 
-    const res = await UpdateProfile(user?.email as string, { ...data, image: imageUrl?.data });
+    const res = await UpdateProfile(user?.email as string, { ...data, ...imageUrl });
     setLoading(false);
 
     if (res.status === 200) {
