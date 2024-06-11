@@ -243,7 +243,7 @@ export const FavorFormDrawer = ({ user, friend, group, children, className, ...p
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger {...props} className={className}>{children}</DrawerTrigger>
       <DrawerContent className="p-4 max-h-[90dvh]">
-        <ScrollArea className="overflow-auto">
+        <ScrollArea className="overflow-auto h-full max-h-[calc(90dvh-48px)]">
           <FavorForm group={group} setOpen={setOpen} user={user} friend={friend} className="mx-2 my-[6px]"/>
         </ScrollArea>
       </DrawerContent>
