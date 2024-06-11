@@ -7,7 +7,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { UpdateProfile } from "@/lib/updateProfile";
-import { deleteImage, modifyFile, uploadImage } from "@/lib/imageActions";
+import { deleteImage } from "@/lib/imageActions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -54,11 +54,17 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
     setLoading(true);
     let imageUrl;
 
-    if (file) {  
+    if (file) {
       const formData = new FormData();
-      formData.append("image", await modifyFile(file) as File);
+      formData.set('image', file);
+      
+      const req = await fetch('/api/upload-image', {
+        method: 'POST',
+        body: formData
+      })
 
-      const uploadRes = await uploadImage( formData );
+      const uploadRes = await req.json()
+
       imageUrl = { image: uploadRes.data, imageDelUrl: uploadRes.del };
 
       // Delete old image
