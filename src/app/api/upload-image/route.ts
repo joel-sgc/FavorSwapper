@@ -31,7 +31,7 @@ export const POST = auth(async function POST(req) {
 
 // Usage: const newFile = await modifyFile(file);
 // Afterwards, add the file to the FormData object and upload it to ImgBB.
-export async function modifyFile(formData: FormData): Promise<File> {
+async function modifyFile(formData: FormData): Promise<File> {
   // Step 1: Read the file into an ArrayBuffer
   const file = formData.get('image') as File;
   const arrayBuffer = await file.arrayBuffer();
