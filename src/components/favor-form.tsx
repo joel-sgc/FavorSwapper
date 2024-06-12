@@ -183,19 +183,25 @@ export const FavorForm = ({ user, friend, group, setOpen, className, ...props }:
                       variant="outline"
                       role="combobox"
                       aria-expanded={openUserSelect}
-                      className="w-full justify-between"
+                      className="w-full"
                     >
                       {!group ? (
                         field.value
-                          ? user.friends?.find((friend) => friend?.id === field.value)?.name
-                          : "Select favor recipient..."
+                          ? (
+                            user.friends?.filter((friend) => friend?.id === field.value)?.map((friend) => (
+                              <>
+                                <img alt="" aria-hidden src={friend.image} referrerPolicy="no-referrer" className="size-7 rounded-full border bg-card mr-2"/>
+                                {friend.name}
+                              </>
+                            ))
+                          ) : "Select favor recipient..."
                       ) : group.name}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      <ChevronsUpDown className="h-4 w-4 ml-auto shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0">
                     <Command>
-                      <CommandInput autoComplete="off" placeholder="Search Favor Friends..." />
+                      <CommandInput autoComplete="off" autoFocus={false} placeholder="Search Favor Friends..." />
                       <CommandEmpty>No Favor Friends found :&#40;</CommandEmpty>
                       <CommandGroup>
                         {user.friends?.map((friend) => (

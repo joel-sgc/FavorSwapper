@@ -18,8 +18,8 @@ const roboto = Roboto({
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: true
+  userScalable: true,
+  interactiveWidget: 'resizes-content'    // SOLVES MF KEYBOARD ISSUE
 }
 
 export const metadata: Metadata = {
