@@ -59,13 +59,19 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body className={cn(
         "min-h-screen flex flex-col bg-background font-roboto antialiased",
         roboto.variable
       )}>
         {/* Header and Footer handled in Middleware Provider */}
-        <MiddlewareProvider session={session}>
+        <MiddlewareProvider 
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+          session={session}
+        >
           {session && <Header session={session}/>}
           {children}
           {session && <Footer session={session}/>}

@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeftRightIcon, Coins, Menu, Settings, User, UserPlus2, Users2Icon } from "lucide-react";
+import { ArrowLeftRightIcon, Coins, Menu, MoonIcon, Settings, SunIcon, User, UserPlus2, Users2Icon } from "lucide-react";
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from "../ui/drawer";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { signOut } from "next-auth/react";
@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { Session } from "next-auth";
 import { useState } from "react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 
 const navLinks = [
   {
@@ -39,6 +40,7 @@ const navLinks = [
 
 export const MobileDrawer = ({ session }: { session: Session | null }) => {
   const [open, setOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
   
   return (
     <Drawer direction="left" open={open} onOpenChange={setOpen}>
@@ -90,10 +92,8 @@ export const MobileDrawer = ({ session }: { session: Session | null }) => {
               </Link>
             </Button>
 
-            <Button size='icon' asChild onClick={() => setOpen(false)}>
-              <Link href='/settings'>
-                <Settings/>
-              </Link>
+            <Button size='icon' onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+              {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
             </Button>
           </div>
 
