@@ -59,6 +59,11 @@ div[data-radix-popper-content-wrapper] {
   height: 0px !important;
 }
 
+main {
+  margin-top: 82px;
+  margin-bottom: 74px;
+}
+
 
 @layer base {
   * {

@@ -14,9 +14,8 @@ const ProfilePage = async ({ params }: { params: { id: string }}) => {
   const user = await prisma.user.findUnique({ where: { id: params.id }});
   const socials = JSON.parse(user?.socials as string) as socials;
 
-  const alreadyFriends = session?.user.friends.some((friend) => friend.id === session?.user?.id);
+  const alreadyFriends = session?.user.friends.some((friend) => friend.id === params.id);
   const alreadySentFriendReq = session?.user.sentFriendRequests.some((req) => req.sender.id === session?.user?.id && req.receiver.id === user?.id);
-
 
   if (!user) redirect('/');
 
@@ -24,7 +23,7 @@ const ProfilePage = async ({ params }: { params: { id: string }}) => {
     <main className="flex-1 flex flex-col gap-4 pb-[72px]">
       <div className="w-full bg-secondary h-24"/>
       <div className="flex flex-col items-center px-4">
-        <Avatar className="size-32 -mt-12 mb-2">
+        <Avatar className="size-32 -mt-12 mb-2 bg-card">
           <AvatarImage src={user.image as string} alt="" aria-hidden referrerPolicy="no-referrer"/>
           <AvatarFallback>{(user?.name as string).substring(0,1).trim()}</AvatarFallback>
         </Avatar>
