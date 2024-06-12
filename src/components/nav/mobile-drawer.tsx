@@ -47,7 +47,7 @@ export const MobileDrawer = ({ session }: { session: Session | null }) => {
       <DrawerTrigger className="md:hidden">
         <Menu className="h-10 w-auto"/>
       </DrawerTrigger>
-      <DrawerContent variant="left" className="border-l-0 overscroll-auto1">
+      <DrawerContent variant="left" className="border-l-0 overscroll-auto">
         <DrawerHeader className="flex flex-col gap-4 pr-2">
           <h1 className="text-xl font-semibold underline text-primary">DACS Favor Swapper</h1>
 
