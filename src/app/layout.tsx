@@ -59,7 +59,7 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={cn(
         "min-h-screen flex flex-col bg-background font-roboto antialiased",
         roboto.variable

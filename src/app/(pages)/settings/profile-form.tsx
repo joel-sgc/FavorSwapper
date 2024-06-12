@@ -83,6 +83,15 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
     }
   }
 
+  const verifyFileSize = (file: File) => {
+    if (file.size / (1000000) > 4) {
+      return form.setError('image', { type: 'custom', message: 'File size must be less than 4MB.'});
+    } else {
+      form.clearErrors('image');
+      setFile(file);
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -104,7 +113,7 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
                 <FormItem className="w-full">
                   <FormLabel>Profile Picture</FormLabel>
                   <FormControl>
-                    <ImageUpload disabled={loading} {...field} file={file} onChange={(e) => setFile((e.target.files as FileList)[0])}/>
+                    <ImageUpload disabled={loading} {...field} file={file} onChange={(e) => verifyFileSize((e.target.files as FileList)[0])}/>
                   </FormControl>
                   <FormDescription>
                     This is your Profile Picture.

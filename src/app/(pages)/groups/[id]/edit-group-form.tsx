@@ -70,6 +70,15 @@ export const EditGroup = ({ user, group, children, ...props }: { user: Session["
     }
   }
 
+  const verifyFileSize = (file: File) => {
+    if (file.size / (1000000) > 4) {
+      return form.setError('image', { type: 'custom', message: 'File size must be less than 4MB.'});
+    } else {
+      form.clearErrors('image');
+      setFile(file);
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>{children}</DialogTrigger>
@@ -100,7 +109,7 @@ export const EditGroup = ({ user, group, children, ...props }: { user: Session["
                 <FormItem className="w-full">
                   <FormLabel>Favor Group Image</FormLabel>
                   <FormControl>
-                    <ImageUpload disabled={loading} {...field} file={file} onChange={(e) => setFile((e.target.files as FileList)[0])}/>
+                    <ImageUpload disabled={loading} {...field} file={file} onChange={(e) => verifyFileSize((e.target.files as FileList)[0])}/>
                   </FormControl>
                   <FormDescription>
                     This is your Favor Group's image.
