@@ -49,7 +49,7 @@ export const EditGroup = ({ user, group, children, ...props }: { user: Session["
         image = uploadRes.data;
 
         // Delete old image
-        await deleteImage(group?.id as string);
+        await deleteImage(group?.id as string, "group");
       }
 
       const res = await updateGroup({ groupId: group?.id as string, data: { name: data.name, ...image }, user });

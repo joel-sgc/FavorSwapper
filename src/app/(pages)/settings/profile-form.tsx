@@ -18,7 +18,7 @@ import { toast } from "sonner";
 export const profileFormSchema = z.object({
   name: z.string().min(2).max(50),
   image: z.string().optional(),
-  imageDelUrl: z.string().optional(),
+  imageId: z.string().optional(),
   email: z.string().email().readonly(),
   username: z.string().trim().toLowerCase()
              .min(2, { message: 'Username must be at least 2 characters long.' })
@@ -52,7 +52,7 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
 
   async function onSubmit(data: z.infer<typeof profileFormSchema>) {
     setLoading(true);
-    let imageUrl;
+    let image;
 
     if (file) {
       const formData = new FormData();
@@ -65,16 +65,15 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
       })
 
       const uploadRes = await req.json()
-
-      imageUrl = { image: uploadRes.data, imageDelUrl: uploadRes.del };
+      image = uploadRes.data;
 
       // Delete old image
-      if (user?.imageDelUrl) {
-        await deleteImage(user?.imageDelUrl);
+      if (user?.imageId) {
+        await deleteImage(user?.id as string, "user");
       }
     }
 
-    const res = await UpdateProfile(user?.email as string, { ...data, ...imageUrl });
+    const res = await UpdateProfile(user?.email as string, { ...data, ...image });
     setLoading(false);
 
     if (res.status === 200) {

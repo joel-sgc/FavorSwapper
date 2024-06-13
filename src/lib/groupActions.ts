@@ -198,7 +198,7 @@ export const deleteGroup = async ({ groupId, user }: { groupId: string, user: Se
     // Delete group's picture from Cloudinary
     if (group.imageId) {
       // Delete image from Cloudinary
-      await deleteImage(group.imageId);
+      await deleteImage(group.imageId, "group");
     }
 
     revalidatePath('/groups', 'layout');

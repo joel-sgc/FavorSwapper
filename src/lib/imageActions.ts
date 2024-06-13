@@ -8,11 +8,17 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const deleteImage = async ( id: string ) => {
+export const deleteImage = async ( id: string, type: "user" | "group" ) => {
   try {
-    const group = await prisma.favorGroup.findUnique({ where: { id }});
+    let record;
 
-    const publicId = group?.imageId;
+    if (type === "user") {
+      record = await prisma.user.findUnique({ where: { id }});
+    } else if (type === "group") {
+      record = await prisma.favorGroup.findUnique({ where: { id }});
+    }
+
+    const publicId = record?.imageId;
     if (!publicId) return { status: 404, message: "Image not found" };
     console.log(publicId)
 
