@@ -46,7 +46,7 @@ export const DailyCheckin = ({
               </div>
               <div className="text-2xl font-bold">{activeDaysThisMonth.length}</div>
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">You've checked in {activeDaysThisMonth.length} days this month.</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">You've checked in {activeDaysThisMonth.length} days.</div>
           </div>
           <div className="grid gap-2">
             <div className="flex items-center justify-between">

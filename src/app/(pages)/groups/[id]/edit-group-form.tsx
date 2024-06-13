@@ -33,11 +33,12 @@ export const EditGroup = ({ user, group, children, ...props }: { user: Session["
   async function onSubmit(data: z.infer<typeof groupFormSchema>) {
     try {
       setLoading(true);
-      let imageUrl;
+      let image;
 
       if (file) {
         const formData = new FormData();
-        formData.set('image', file);
+        formData.set('file', file);
+        formData.append('tags', 'group_picture');
         
         const req = await fetch('/api/upload-image', {
           method: 'POST',
@@ -45,16 +46,13 @@ export const EditGroup = ({ user, group, children, ...props }: { user: Session["
         })
 
         const uploadRes = await req.json()
-
-        imageUrl = { image: uploadRes.data, imageDelUrl: uploadRes.del };
+        image = uploadRes.data;
 
         // Delete old image
-        if (group?.imageDelUrl) {
-          await deleteImage(group?.imageDelUrl);
-        }
+        await deleteImage(group?.id as string);
       }
 
-      const res = await updateGroup({ groupId: group?.id as string, data: { name: data.name, ...imageUrl }, user });
+      const res = await updateGroup({ groupId: group?.id as string, data: { name: data.name, ...image }, user });
       setLoading(false);
 
       if (res.status === 200) {

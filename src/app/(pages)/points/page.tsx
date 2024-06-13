@@ -7,7 +7,7 @@ import { auth } from "@/auth";
 const PointsPage = async () => {
   const session = await auth();
 
-  const activeDays = session?.user.activeDaysHistory.filter((date) => new Date(date).getMonth() === new Date().getMonth()) as Date[];
+  const activeDays = session?.user.activeDaysHistory as Date[];
   let streak = 1;
   let adReward = 0;
 

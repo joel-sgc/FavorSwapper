@@ -9,7 +9,7 @@ export const FavorComp = ({ favor, className, ...props }: { favor: favor, classN
 const [collapsed, setCollapsed] = useState(true);
   
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader onClick={() => setCollapsed(!collapsed)}>
         <CardTitle className="flex items-center gap-2">
           <Badge>{favor.favorValue}</Badge>

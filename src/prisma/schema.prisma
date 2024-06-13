@@ -8,49 +8,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//  Favor objects will be shared between senders/receivers and stored within favor groups
-// {
-  // id: cuid()
-  // title: String
-  // description: String
-  // favorValue: number
-  // sender: {id, name, username, image}
-
-  // Next 2 are interchangable depending on whether it's a 
-  
-  // user-user
-  // or
-  // user-group 
-
-  // receiver: {id, name, username, image}
-// }
-
 model User {
   id                      String          @id @default(cuid())
   name                    String?
   username                String?         @unique
   email                   String          @unique
   emailVerified           DateTime?
-  image                   String?
   createdAt               DateTime        @default(now())
   updatedAt               DateTime        @updatedAt
   accounts                Account[]
   Authenticators          Authenticator[]
   sessions                Session[]
 
-  imageDelUrl             String?      @default("")
+  image                   String?
+  imageId                 String?         @default("")
 
-  activeDaysHistory       DateTime[] @default(dbgenerated("(ARRAY[]::timestamp without time zone[])::timestamp(3) without time zone[]"))
-  socials                 String     @default("{\"tiktok\":\"\",\"instagram\":\"\",\"twitter\":\"\"}")
+  activeDaysHistory       DateTime[]      @default(dbgenerated("(ARRAY[]::timestamp without time zone[])::timestamp(3) without time zone[]"))
+  socials                 String          @default("{\"tiktok\":\"\",\"instagram\":\"\",\"twitter\":\"\"}")
 
-  favorPoints             Int          @default(4)
-  sentFavors              String       @default("[]")
-  receivedFavors          String       @default("[]")
-  favorGroups             String       @default("[]")
+  favorPoints             Int             @default(4)
+  sentFavors              String          @default("[]")
+  receivedFavors          String          @default("[]")
+  favorGroups             String[]
 
-  sentFriendRequests      String @default("[]")
-  receivedFriendRequests  String @default("[]")
-  friends                 String @default("[]")
+  sentFriendRequests      String          @default("[]")
+  receivedFriendRequests  String          @default("[]")
+  friends                 String          @default("[]")
+
+  xata_id                String          @ignore @unique(map: "User__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
+  xata_version           Int             @ignore @default(0)
+  xata_createdat         DateTime        @ignore @default(now()) @db.Timestamptz(6)
+  xata_updatedat         DateTime        @ignore @default(now()) @db.Timestamptz(6)
 }
 
 model Account {
@@ -105,13 +93,19 @@ model Authenticator {
 
 model FavorGroup {
   id          String    @id @default(cuid())
-  admins      String    @default("")       // Stringified Array of admin minimalUser types
+  owner       String                           // ID of the user who created the group / is currently the owner
+  admins      String    @default("")           // Stringified Array of admin minimalUser types
   name        String?
   image       String?   @default("")
-  imageDelUrl String?   @default("")
+  imageId     String?   @default("")
   free        Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  members     String    @default("[]")     // Stringified array of minimalUser types
-  favors      String    @default("[]")     // Stringified array of favor types
+  members     String    @default("[]")         // Stringified array of minimalUser types
+  favors      String    @default("[]")         // Stringified array of favor types
+
+  xata_id        String   @ignore @unique(map: "FavorGroup__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
+  xata_version   Int      @ignore @default(0)
+  xata_createdat DateTime @ignore @default(now()) @db.Timestamptz(6)
+  xata_updatedat DateTime @ignore @default(now()) @db.Timestamptz(6)
 }

@@ -10,7 +10,7 @@ import Link from "next/link";
 
 const GroupsPage = async () => {
   const session = await auth();
-  const groups = await prisma.favorGroup.findMany({ where: { id: { in: session?.user.favorGroups.map(group => group.id) }}});
+  const groups = await prisma.favorGroup.findMany({ where: { id: { in: session?.user.favorGroups }}});
 
   return (
     <main className="flex-1 flex flex-col gap-4 p-4 pb-[72px]">

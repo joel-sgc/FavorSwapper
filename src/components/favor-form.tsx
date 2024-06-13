@@ -26,11 +26,11 @@ export const FavorForm = ({ user, friend, group, setOpen, className, ...props }:
   const [loading, setLoading] = useState(false);
 
   const favorFormSchema = z.object({
-    id: z.string().optional(),
+    id: z.string().cuid2().optional(),
     title: z.string().min(2).max(100),
     description: z.string().min(2).max(500),
     favorPoints: z.coerce.number().int().min(1).finite().nonnegative(),
-    dueDate: z.date().min(new Date()),
+    dueDate: z.date(),
     receiverId: z.string().cuid(),
   })
 
@@ -159,7 +159,12 @@ export const FavorForm = ({ user, friend, group, setOpen, className, ...props }:
                     <Calendar
                       mode="single"
                       selected={field.value}
-                      onSelect={field.onChange}
+                      onSelect={(e) => e && field.onChange(e)}
+                      modifiers={{
+                        disabled: [
+                          { before: new Date() },
+                        ]
+                      }}
                     />
                   </PopoverContent>
                 </Popover>

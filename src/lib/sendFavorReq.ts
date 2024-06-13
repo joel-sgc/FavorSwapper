@@ -1,9 +1,10 @@
 "use server"
-import { favor, minimalUser } from "@/auth";
-import prisma from "@/prisma/client"
 import { FavorGroup, User } from "@prisma/client";
-import { Session } from "next-auth";
+import { createId } from "@paralleldrive/cuid2";
 import { revalidatePath } from "next/cache";
+import { favor, minimalUser } from "@/auth";
+import prisma from "@/prisma/client";
+import { Session } from "next-auth";
 
 export const sendFavorReq = async ({ favor, user }: { favor: favor, user: Session["user"] | null }) => {
   try {
@@ -29,8 +30,11 @@ export const sendFavorReq = async ({ favor, user }: { favor: favor, user: Sessio
         where: { id: user.id },
         data: {
           sentFavors: JSON.stringify([
-            user.sentFavors,
-            favor
+            ...user.sentFavors,
+            {
+              ...favor,
+              id: createId()
+            }
           ])
         }
       });
@@ -40,7 +44,10 @@ export const sendFavorReq = async ({ favor, user }: { favor: favor, user: Sessio
         data: {
           favors: JSON.stringify([
             ...JSON.parse(recipient.favors),
-            favor
+            {
+              ...favor,
+              id: createId()
+            }
           ])
         }
       });
@@ -59,7 +66,10 @@ export const sendFavorReq = async ({ favor, user }: { favor: favor, user: Sessio
         data: {
           sentFavors: JSON.stringify([
             ...user.sentFavors,
-            favor
+            {
+              ...favor,
+              id: createId()
+            }
           ])
         }
       });
@@ -70,7 +80,10 @@ export const sendFavorReq = async ({ favor, user }: { favor: favor, user: Sessio
         data: {
           receivedFavors: JSON.stringify([
             ...JSON.parse(recipient.receivedFavors),
-            favor
+            {
+              ...favor,
+              id: createId()
+            }
           ])
         }
       });

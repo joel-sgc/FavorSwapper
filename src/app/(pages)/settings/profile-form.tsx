@@ -56,7 +56,8 @@ export const ProfileForm = ({ user }: { user?: Session["user"] }) => {
 
     if (file) {
       const formData = new FormData();
-      formData.set('image', file);
+      formData.set('file', file);
+      formData.append('tags', 'profile_picture');
       
       const req = await fetch('/api/upload-image', {
         method: 'POST',

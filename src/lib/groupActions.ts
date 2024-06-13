@@ -1,6 +1,7 @@
 "use server"
-import { minimalFavorGroup, minimalUser } from "@/auth";
+import { deleteImage } from "./imageActions";
 import { revalidatePath } from "next/cache";
+import { minimalUser } from "@/auth";
 import prisma from "@/prisma/client";
 import { Session } from "next-auth";
 
@@ -10,33 +11,18 @@ export const createGroup = async ({ groupName, user }: { groupName: string, user
     // If a favor group is disbanded, the user does not receive those points back. In order to transfer a group, the
     // new admin must pay a 25 point fee to the owner, this is unless the owner waives this option.
 
+    // Check if user is logged in
+    if (!user) return { status: 401, message: "You must be logged in to create a group." };
+
     // First we check if the user is an admin of at least 2 free
     let freeUsedUp = 0;
-    for (let i = 0; i < user.favorGroups.length; i++) {
-      if (user.favorGroups[i].free && user.favorGroups[i].admins.some((admin) => admin.id === user.id)) {
-        // Check DB to be sure
-        const group = await prisma.favorGroup.findUnique({ where: { id: user.favorGroups[i].id }});
+    const joinedGroups = await prisma.favorGroup.findMany({ where: { id: { in: user.favorGroups }}});
 
-        // If group not found
-        if (!group) {
-          return { status: 500, message: "Something went wrong, please try again later."};
-        }
-
-        const isAdmin = (JSON.parse(group.admins) as minimalUser[]).some((admin) => admin.id === user.id);
-        const isGroupFree = group.free;
-        
-        if (isAdmin && isGroupFree) freeUsedUp++;
-        else if (!group?.free || !isAdmin) {
-          // In case that for some reason the user-data doesn't natch the db data (isAdmin/isGroupFree), we fix the error.
-          user.favorGroups[i].admins = JSON.parse(group.admins);
-          
-          await prisma.user.update({
-            where: { id: user.id },
-            data: { favorGroups: group.admins }
-          });
-        }
+    joinedGroups.forEach((group) => {
+      if (group.owner === user.id) {
+        if (group.free) freeUsedUp++;
       }
-    }
+    });
 
     // If we have less than 2 free used up favor groups, we create the favor group for free. If not, we try to charge 50 favor points
     if (freeUsedUp === 2) {
@@ -55,6 +41,7 @@ export const createGroup = async ({ groupName, user }: { groupName: string, user
 
     const newGroup = await prisma.favorGroup.create({ data: {
       name: groupName,
+      owner: user.id as string,
       admins: JSON.stringify([{
         id: user.id,
         name: user.name,
@@ -73,20 +60,10 @@ export const createGroup = async ({ groupName, user }: { groupName: string, user
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        favorGroups: JSON.stringify([
-          ...user.favorGroups as minimalFavorGroup[],
-          {
-            id: newGroup.id,
-            name: groupName,
-            free: freeUsedUp < 2,
-            admins: [{
-              id: user.id,
-              name: user.name,
-              image: user.image,
-              username: user.username
-            }],
-          }
-        ])
+        favorGroups: [
+          ...user.favorGroups,
+          newGroup.id,
+        ]
       }
     })
 
@@ -137,15 +114,10 @@ export const addToGroup = async ({ groupId, username, user }: { groupId: string,
     await prisma.user.update({
       where: { username },
       data: {
-        favorGroups: JSON.stringify([
-          ...JSON.parse(userToAdd.favorGroups),
-          {
-            id: groupId,
-            name: group.name,
-            free: group.free,
-            admins: JSON.parse(group.admins)
-          }
-        ])
+        favorGroups: [
+          ...userToAdd.favorGroups,
+          groupId,
+        ]
       }
     })
 
@@ -160,7 +132,7 @@ export const addToGroup = async ({ groupId, username, user }: { groupId: string,
   }
 }
 
-export const updateGroup = async ({ groupId, data, user }: { groupId: string, data: { name?: string, image?: string, imageDelUrl?: string }, user: Session["user"] }) => {
+export const updateGroup = async ({ groupId, data, user }: { groupId: string, data: { name?: string, image?: string, imageId?: string }, user: Session["user"] }) => {
   try {
     // Check if user is logged in
     if (!user) return { status: 401, message: "You must be logged in to update a group." };
@@ -178,7 +150,7 @@ export const updateGroup = async ({ groupId, data, user }: { groupId: string, da
       data: {
         name: data.name ?? group.name,
         image: data.image ?? group.image,
-        imageDelUrl: data.imageDelUrl ?? group.imageDelUrl
+        imageId: data.imageId ?? group.imageId
       }
     });
 
@@ -209,19 +181,25 @@ export const deleteGroup = async ({ groupId, user }: { groupId: string, user: Se
 
     const groupUsers = await prisma.user.findMany({ where: { id: { in: (JSON.parse(group.members) as minimalUser[]).map((m) => m.id ) }}})
     const updatePromises = groupUsers.map((user) => {
-      const data = (JSON.parse(user.favorGroups) as minimalFavorGroup[]).filter((group) => group.id !== groupId);
+    const favorGroups = user.favorGroups.filter((group) => group !== groupId);
 
-      if (data) {
+      if (favorGroups) {
         return prisma.user.update({
           where: { id: user.id },
           data: {
-            favorGroups: JSON.stringify(data)
+            favorGroups
           }
         })
       }
     });
 
     await Promise.all(updatePromises);
+
+    // Delete group's picture from Cloudinary
+    if (group.imageId) {
+      // Delete image from Cloudinary
+      await deleteImage(group.imageId);
+    }
 
     revalidatePath('/groups', 'layout');
     return { status: 200, message: "Group deleted." };

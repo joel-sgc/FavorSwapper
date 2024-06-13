@@ -62,13 +62,14 @@ declare module "next-auth" {
     user: {
       username: string
       activeDaysHistory: Date[]
+      streak: number
       favorPoints: number
-      imageDelUrl: string
+      imageId: string
       
       // Parsed sets
       friends: minimalUser[]
       socials: socials
-      favorGroups: minimalFavorGroup[]
+      favorGroups: string[]
 
       sentFavors: favor[]
       receivedFavors: favor[]
@@ -81,10 +82,10 @@ declare module "next-auth" {
     username: string
     activeDaysHistory: Date[]
     favorPoints: number
-    imageDelUrl: string
+    imageId: string
+    favorGroups: string[]   // Array of group IDs
     
     // Stringified
-    favorGroups: string     // Array of group ids and names
     sentFavors: string      // Array of favors
     receivedFavors: string  // Array of favors
     socials: string         // Object with socials
@@ -124,13 +125,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Automatically parses strings into an object
       message.session.user.socials = JSON.parse(message.session.user?.socials ?? '{"tiktok":"","instagram":"","twitter":""}');
       message.session.user.friends = JSON.parse(message.session.user?.friends ?? '[]');
-      message.session.user.favorGroups = JSON.parse(message.session.user.favorGroups ?? "[]")
 
-      message.session.user.sentFavors = JSON.parse(message.session.user.sentFavors ?? "[]")
-      message.session.user.receivedFavors = JSON.parse(message.session.user.receivedFavors ?? "[]")
+      message.session.user.sentFavors = JSON.parse(message.session.user.sentFavors ?? "[]");
+      message.session.user.receivedFavors = JSON.parse(message.session.user.receivedFavors ?? "[]");
 
-      message.session.user.sentFriendRequests = JSON.parse(message.session.user.sentFriendRequests ?? "[]")
-      message.session.user.receivedFriendRequests = JSON.parse(message.session.user.receivedFriendRequests ?? "[]")
+      message.session.user.sentFriendRequests = JSON.parse(message.session.user.sentFriendRequests ?? "[]");
+      message.session.user.receivedFriendRequests = JSON.parse(message.session.user.receivedFriendRequests ?? "[]");
 
       // Also register daily check-ins
 
@@ -200,6 +200,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           favorPoints: message.session.user.favorPoints
         }
       })
+
+      message.session.user.streak = streak;
 
       return;
     }
