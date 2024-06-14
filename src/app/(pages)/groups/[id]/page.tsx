@@ -2,9 +2,9 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { ChevronLeftIcon, Component, Loader2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { GroupInfoDrawer } from "./group-info-drawer";
-import { FavorComp } from "@/components/favor-comp";
 import { FavorForm } from "@/components/favor-form";
 import { PageTitle } from "@/components/page-title";
+import { FavorList } from "@/components/favor-list";
 import { auth, favor, favorGroup } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { redirect } from "next/navigation";
@@ -26,8 +26,8 @@ const GroupPage = async ({ params }: { params: { id: string }}) => {
   const favors = JSON.parse(group?.favors as string) as favor[]
 
   if (isMember) return (
-    <main className="flex-1 flex flex-col gap-4 p-4 pb-[72px]">
-      <PageTitle className="justify-between">
+    <main className="flex-1 flex flex-col gap-4 p-4 pt-0 pb-[72px]">
+      <PageTitle className="justify-between flex-wrap sticky top-[82px] z-10 pt-4 bg-background">
         <div className="flex items-center gap-2">
           <Button variant='secondary' size='icon' className="mr-2" asChild>
             <Link href='/groups'><ChevronLeftIcon/></Link>
@@ -46,16 +46,18 @@ const GroupPage = async ({ params }: { params: { id: string }}) => {
             </svg>
           </Button>
         </GroupInfoDrawer>
+
+        <hr className="w-full mb-2 shrink-0 border-t-0 h-0.5 bg-border"/>
       </PageTitle>
 
 
-      {/* LOADING */}
+      
       {!group ? (
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex flex-1 items-center justify-center">   {/* LOADING */}
           <Loader2 size={64} className="animate-spin"/>
         </div>
       ) : favors.length === 0 ? (
-        <div className="w-full h-full flex-1 border-t-2 text-center flex flex-col gap-2 items-center justify-center">
+        <div className="w-full h-full flex-1 border-t-2 text-center flex flex-col gap-2 items-center justify-center">   {/* NO FAVORS */}
           <Component size={128} />
           <h2 className="text-2xl font-semibold">No active Favor Requests found...</h2>
           <span className="text-muted-foreground">Be the first to request a favor!</span>
@@ -72,11 +74,7 @@ const GroupPage = async ({ params }: { params: { id: string }}) => {
           </Drawer>
         </div>
       ) : (
-        <ScrollArea className="w-full h-full flex-1 border-t-2 pt-4">
-          {favors.map(favor => (
-            <FavorComp favor={favor} key={`favor-${group?.id}-${favor.id}`} className="mt-2 first:mt-0"/>
-          ))}
-        </ScrollArea>
+        <FavorList favors={favors} className="w-full h-full flex-1"/>   // FAVOR LIST
       )}
     </main>
   )

@@ -1,15 +1,23 @@
 "use client"
 import { CalendarIcon, UserIcon } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { favor } from "@/auth";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 
-export const FavorComp = ({ favor, className, ...props }: { favor: favor, className?: string }) => {
+type FavorProps = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> & {
+  favor: favor,
+  className?: string
+}
+
+export const FavorComp = React.forwardRef<
+  HTMLDivElement,
+  FavorProps
+>(({ favor, className, ...props }, ref ) => {
 const [collapsed, setCollapsed] = useState(true);
   
   return (
-    <Card className={className}>
+    <Card className={className} {...props} ref={ref}>
       <CardHeader onClick={() => setCollapsed(!collapsed)}>
         <CardTitle className="flex items-center gap-2">
           <Badge>{favor.favorValue}</Badge>
@@ -30,4 +38,4 @@ const [collapsed, setCollapsed] = useState(true);
       </CardFooter>
     </Card>
   )
-}
+})

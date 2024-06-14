@@ -1,18 +1,18 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FavorComp } from "@/components/favor-comp";
 import { PageTitle } from "@/components/page-title";
 import { ArrowLeftRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { auth, favor } from "@/auth";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
 export default async function Home() {
   const session = await auth();
 
   return (
-    <main className="flex-1 flex flex-col gap-4 p-4 pb-[72px]">
-      <PageTitle className="justify-between">
+    <main className="flex-1 flex flex-col gap-4 px-4 pb-[72px]">
+      <PageTitle className="justify-between flex-wrap sticky top-[82px] z-10 pt-4 bg-background">
         <div className="flex gap-2 items-center">
           <ArrowLeftRightIcon size={32}/>
           <h1>Favor Requests</h1>
@@ -31,15 +31,14 @@ export default async function Home() {
           <DropdownMenuContent className="w-fit ml-auto mr-4">
             <DropdownMenuLabel>Favor Request Actions</DropdownMenuLabel>
             <DropdownMenuSeparator/>
-            <DropdownMenuItem >
-              View Favor History
-              {/* <Drawer direction="right">
-                <DrawerTrigger className="px-2 py-1.5 text-sm">View Favor History</DrawerTrigger>
-                <DrawerContent variant="right" className="ml-0 w-screen rounded-none border-none"></DrawerContent>
-              </Drawer> */}
-            </DropdownMenuItem>
+            <Drawer direction="right">
+              <DrawerTrigger className="px-2 py-1.5 text-sm">View Favor History</DrawerTrigger>
+              <DrawerContent variant="right" className="ml-0 w-screen rounded-none border-none"></DrawerContent>
+            </Drawer>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <hr className="w-full mb-2 shrink-0 border-t-0 h-0.5 bg-border"/>
       </PageTitle>
 
       <ScrollArea className="flex-1">

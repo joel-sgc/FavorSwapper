@@ -59,17 +59,13 @@ export const GroupInfoDrawer = async ({ session, group, children, ...props }: { 
                 <DropdownMenuLabel>Group Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator/>
                 {isAdmin && (
-                  <DropdownMenuItem asChild>
-                    <EditGroup group={group as FavorGroup} user={session?.user as Session["user"]}><div className="py-1.5 px-2 text-sm cursor-default select-none">Edit Group</div></EditGroup>
-                  </DropdownMenuItem>
+                  <EditGroup group={group as FavorGroup} user={session?.user as Session["user"]}/>
                 )}
                 <DropdownMenuItem>Leave Group</DropdownMenuItem>
                 {isAdmin && (
                   <>
                     <DropdownMenuSeparator/>
-                    <DropdownMenuItem asChild>
-                      <DeleteGroup user={session?.user as Session["user"]} groupId={group?.id as string} />
-                    </DropdownMenuItem>
+                    <DeleteGroup user={session?.user as Session["user"]} groupId={group?.id as string} />
                   </>
                 )}
               </DropdownMenuContent>

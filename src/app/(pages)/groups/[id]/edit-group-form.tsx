@@ -12,12 +12,11 @@ import { Input } from "@/components/ui/input";
 import { FavorGroup } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { Session } from "next-auth";
-import { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export const EditGroup = ({ user, group, children, ...props }: { user: Session["user"], group?: FavorGroup | null, children: ReactNode }) => {
+export const EditGroup = ({ user, group, ...props }: { user: Session["user"], group?: FavorGroup | null }) => {
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | null>();
   const [open, setOpen] = useState(false);
@@ -79,7 +78,7 @@ export const EditGroup = ({ user, group, children, ...props }: { user: Session["
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>{children}</DialogTrigger>
+      <DialogTrigger className="py-1.5 px-2 text-sm cursor-default select-none">Edit Group</DialogTrigger>
       <DialogContent className="w-max max-w-[90dvw]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
