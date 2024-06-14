@@ -8,19 +8,21 @@ import { X } from "lucide-react";
 import { Session } from "next-auth";
 import { Dispatch, SetStateAction, useState } from "react";
 
-export const FavorFilterer = ({ receivedFavors, sentFavors, user }: { receivedFavors?: favor[], sentFavors?: favor[], user?: Session["user"] }) => {
+export const FavorFilterer = ({ receivedFavors = [], sentFavors = [], user }: { receivedFavors?: favor[], sentFavors?: favor[], user?: Session["user"] }) => {
   const [selected, setSelected] = useState<string[]>(['received']);
+
+  const groupFavors = user?.receivedFavors.filter((favor) => favor.groupId && favor.sender.id !== user.id);
   
-  const isReceived = selected.includes('received') && receivedFavors && receivedFavors.length > 0;
-  const isSent = selected.includes('sent') && sentFavors && sentFavors.length > 0;
-  // const isGroup = selected.includes('group');
+  const isReceived = (selected.includes('received') && receivedFavors) as boolean;
+  const isSent = (selected.includes('sent') && sentFavors) as boolean;
+  const isGroup = (selected.includes('group') && groupFavors) as boolean;
 
   return (
     <div className="flex-1 flex flex-col gap-2 mt-2 pt-2 border-t-2">
       <div className="flex gap-2">
         <label className={cn(badgeVariants({ variant: 'secondary' }), 'bg-foreground text-base text-background w-fit flex gap-2 items-center hover:bg-unset select-none', isReceived && 'bg-primary')}>
           <input type="checkbox" className="hidden" checked={isReceived} onChange={() => {
-            if (!isSent) return setSelected(['received']);
+            if (!isSent && !isGroup) return setSelected(['received']);
             setSelected(selected.includes('received') ? selected.filter(s => s !== 'received') : [...selected, 'received'])
           }}/>
           Received
@@ -28,28 +30,50 @@ export const FavorFilterer = ({ receivedFavors, sentFavors, user }: { receivedFa
         </label>
 
         <label className={cn(badgeVariants({ variant: 'secondary' }), 'bg-foreground text-base text-background w-fit flex gap-2 items-center hover:bg-unset select-none', isSent && 'bg-primary')}>
-          <input type="checkbox" className="hidden" checked={isReceived} onChange={() => {
-            if (isSent) return setSelected(['received']);
+          <input type="checkbox" className="hidden" checked={isSent} onChange={() => {
+            if (isSent && !isGroup) return setSelected(['received']);
             setSelected(selected.includes('sent') ? selected.filter(s => s !== 'sent') : [...selected, 'sent'])
           }}/>
           Sent
           {selected.includes('sent') && <X size={16}/>}
         </label>
+
+        <label className={cn(badgeVariants({ variant: 'secondary' }), 'bg-foreground text-base text-background w-fit flex gap-2 items-center hover:bg-unset select-none', isGroup && 'bg-primary')}>
+          <input type="checkbox" className="hidden" checked={isGroup} onChange={() => {
+            if (!isSent && isGroup) return setSelected(['received']);
+            setSelected(selected.includes('group') ? selected.filter(s => s !== 'group') : [...selected, 'group'])
+          }}/>
+          Groups
+          {selected.includes('group') && <X size={16}/>}
+        </label>
       </div>
 
-      <ScrollArea className="flex-1 max-h-[631px] border-t-2 pt-2 px-2 pb-[56px] overflow-auto">
-        {isReceived &&  (
-           receivedFavors.map((favor) => (
-            <FavorComp className="mt-2" key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`} favor={favor}/>
-          ))
-        )}
+      {(receivedFavors.length === 0 && sentFavors.length === 0 && groupFavors?.length === 0) ? (
+        <div className="flex-1 flex flex-col items-center justify-center text-center border-t-2">
+          <h1 className="text-5xl font-semibold">No Favors</h1>
+          <p className="text-lg text-muted-foreground">You have no favor requests to display</p>
+        </div>
+      ) : (
+        <ScrollArea className="flex-1 max-h-[631px] border-t-2 pt-2 px-2 pb-[56px] overflow-auto">
+          {isReceived &&  (
+            receivedFavors?.map((favor) => (
+              <FavorComp className="mt-2" key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`} favor={favor}/>
+            ))
+          )}
 
-        {isSent && (
-           sentFavors.map((favor) => (
-            <FavorComp className="mt-2" key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`} favor={favor}/>
-          ))
-        )}
-      </ScrollArea>
+          {isSent && (
+            sentFavors?.map((favor) => (
+              <FavorComp className="mt-2" key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`} favor={favor}/>
+            ))
+          )}
+
+          {isSent && (
+            groupFavors?.map((favor) => (
+              <FavorComp className="mt-2" key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`} favor={favor}/>
+            ))
+          )}
+        </ScrollArea>
+      )}
     </div>
   )
 }
