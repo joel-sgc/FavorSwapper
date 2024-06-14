@@ -1,18 +1,17 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { FavorComp } from "@/components/favor-comp";
 import { PageTitle } from "@/components/page-title";
 import { ArrowLeftRightIcon } from "lucide-react";
+import { FavorFilterer } from "./favor-filterer";
 import { Button } from "@/components/ui/button";
-import { auth, favor } from "@/auth";
+import { auth } from "@/auth";
 
 export default async function Home() {
   const session = await auth();
 
   return (
-    <main className="flex-1 flex flex-col px-4 pb-[72px]">
-      <PageTitle className="justify-between flex-wrap sticky top-[82px] z-10 pt-4 bg-background">
+    <main className="flex-1 flex flex-col p-4 overflow-hidden">
+      <PageTitle className="justify-between">
         <div className="flex gap-2 items-center">
           <ArrowLeftRightIcon size={32}/>
           <h1>Favor Requests</h1>
@@ -37,15 +36,9 @@ export default async function Home() {
             </Drawer>
           </DropdownMenuContent>
         </DropdownMenu>
-
-        <hr className="w-full my-2 shrink-0 border-t-0 h-0.5 bg-border"/>
       </PageTitle>
 
-      <ScrollArea className="flex-1">
-        {(session?.user?.receivedFavors as favor[]).length > 0 && session?.user.receivedFavors.map((favor) => (
-          <FavorComp className="mt-2" key={`favor-user-to-user-${favor.id}-${session.user.id}-${favor?.receiver?.id as string}`} favor={favor}/>
-        ))}
-      </ScrollArea>
+      <FavorFilterer receivedFavors={session?.user.receivedFavors} sentFavors={session?.user.sentFavors} user={session?.user}/>
     </main>
   );
 }
