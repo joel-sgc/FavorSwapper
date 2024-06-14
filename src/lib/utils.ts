@@ -1,4 +1,5 @@
 import { minimalUser } from "@/auth"
+import { User } from "@prisma/client"
 import { type ClassValue, clsx } from "clsx"
 import { Session } from "next-auth"
 import { twMerge } from "tailwind-merge"
@@ -7,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const minifyUser = ( user: Session["user"] | null ) => {
+export const minifyUser = ( user: Session["user"] | null | User ) => {
   return {
     id: user?.id,
     name: user?.name,

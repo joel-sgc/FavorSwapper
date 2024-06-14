@@ -11,7 +11,7 @@ export default async function Home() {
   const session = await auth();
 
   return (
-    <main className="flex-1 flex flex-col gap-4 px-4 pb-[72px]">
+    <main className="flex-1 flex flex-col px-4 pb-[72px]">
       <PageTitle className="justify-between flex-wrap sticky top-[82px] z-10 pt-4 bg-background">
         <div className="flex gap-2 items-center">
           <ArrowLeftRightIcon size={32}/>
@@ -38,7 +38,7 @@ export default async function Home() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <hr className="w-full mb-2 shrink-0 border-t-0 h-0.5 bg-border"/>
+        <hr className="w-full my-2 shrink-0 border-t-0 h-0.5 bg-border"/>
       </PageTitle>
 
       <ScrollArea className="flex-1">

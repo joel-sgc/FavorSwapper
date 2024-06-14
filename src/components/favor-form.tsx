@@ -20,6 +20,7 @@ import { z } from "zod";
 import { sendFavorReq } from "@/lib/sendFavorReq";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { ScrollArea } from "./ui/scroll-area";
+import { getUserFromID } from "@/lib/server-actions";
 
 export const FavorForm = ({ user, friend, group, setOpen, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, setOpen?: Dispatch<SetStateAction<boolean>>, className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);
@@ -56,7 +57,7 @@ export const FavorForm = ({ user, friend, group, setOpen, className, ...props }:
         description: data.description,
         favorValue: data.favorPoints,
         dueDate: data.dueDate,
-        receiver: friend,
+        receiver: friend ?? minifyUser(await getUserFromID(data.receiverId)),
         groupId: group?.id,
         sender: minifyUser(user) as minimalUser
       },
@@ -66,7 +67,7 @@ export const FavorForm = ({ user, friend, group, setOpen, className, ...props }:
 
     if (res.status === 200) {
       if (setOpen) setOpen(false);
-      toast.success('Profile updated successfully.');
+      toast.success('Favor Request Sent!');
       form.reset();
     } else {
       toast.error(res.message);
