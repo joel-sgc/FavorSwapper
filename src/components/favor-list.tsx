@@ -20,6 +20,7 @@ export const FavorList = ({ user, favors, className, ...props }: { user?: Sessio
         <FavorComp
           favor={favor}
           className="mt-2 first:mt-0"
+          id={`favor-${favor.id}`}
           key={`favor-${favor.id}-${favor.sender.id}-${favor.favorValue}`}
           ref={index === favors.length - 1 ? lastItemRef : null}
           isSender={favor.sender.id === user?.id}

@@ -6,12 +6,22 @@ import { Session } from "next-auth";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { useState } from "react";
-import { favor } from "@/auth";
+import { favor, favorGroup } from "@/auth";
 
-export const FavorFilterer = ({ receivedFavors = [], sentFavors = [], user }: { receivedFavors?: favor[], sentFavors?: favor[], user?: Session["user"] }) => {
+export const FavorFilterer = ({
+  receivedFavors = [],
+  sentFavors = [],
+  groupFavors = [],
+  user,
+}: { 
+  receivedFavors?: favor[],
+  sentFavors?: favor[],
+  groupFavors: favorGroup[],
+  user?: Session["user"],
+}) => {
   const [selected, setSelected] = useState<string[]>(['received']);
 
-  const groupFavors: favor[] = [] //user?.receivedFavors.filter((favor) => favor.groupId && favor.sender.id !== user.id);
+  // const groupFavors = user?.receivedFavors.filter((favor) => favor.groupId && favor.sender.id !== user.id);
   
   const isReceived = (selected.includes('received') && receivedFavors) as boolean;
   const isSent = (selected.includes('sent') && sentFavors) as boolean;
@@ -48,13 +58,13 @@ export const FavorFilterer = ({ receivedFavors = [], sentFavors = [], user }: { 
         </label>
       </div>
 
-      {(receivedFavors.length === 0 && sentFavors.length === 0 && groupFavors.length === 0) ? (
+      {(receivedFavors.length === 0 && sentFavors.length === 0 && groupFavors?.length === 0) ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center border-t-2">
           <h1 className="text-5xl font-semibold">No Favors</h1>
           <p className="text-lg text-muted-foreground">You have no favor requests to display</p>
         </div>
       ) : (
-        <ScrollArea className="flex-1 max-h-[631px] border-t-2 pt-2 px-2 pb-[56px] overflow-auto">
+        <ScrollArea className="flex-1 max-h-[calc(100dvh-284px)] border-t-2 pt-2 px-1 pb-[56px] overflow-auto">
           {isReceived &&  (
             receivedFavors?.map((favor) => (
               <FavorComp
@@ -81,11 +91,12 @@ export const FavorFilterer = ({ receivedFavors = [], sentFavors = [], user }: { 
             ))
           )}
 
-          {isSent && (
-            groupFavors?.map((favor) => (
+          {isGroup && (
+            groupFavors?.map((group) => group.favors.map((favor) =>
               <FavorComp
                 key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`}
                 favor={favor}
+                groupName={group.name}
                 className="mt-2"
                 isSender={favor.sender.id === user?.id}
                 onDecline={() => {}}

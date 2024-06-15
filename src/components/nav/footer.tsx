@@ -24,7 +24,7 @@ export const Footer = ({ session }: { session: Session }) => {
 
   return (
     <>
-      <Button asChild size='icon' className="fixed bottom-[72px] right-4 mb-4 -mt-10 scale-100 border-2">
+      <Button asChild size='icon' className="fixed bottom-[74px] right-4 mb-4 -mt-10 scale-100 border-2">
         <FavorFormDrawer group={group} user={session?.user}>
           <PlusIcon/>
         </FavorFormDrawer>

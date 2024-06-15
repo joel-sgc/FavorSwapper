@@ -1,13 +1,24 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { auth, favor, favorGroup, minimalUser } from "@/auth";
 import { PageTitle } from "@/components/page-title";
 import { ArrowLeftRightIcon } from "lucide-react";
 import { FavorFilterer } from "./favor-filterer";
 import { Button } from "@/components/ui/button";
-import { auth } from "@/auth";
+import prisma from "@/prisma/client";
 
 export default async function Home() {
   const session = await auth();
+  const groupFavors: favorGroup[] = (await prisma.favorGroup.findMany({ where: {
+    id: {
+      in: session?.user.favorGroups
+    }
+  }})).map((group) => { return {
+    ...group, 
+    favors: (JSON.parse(group.favors) as favor[]).filter((favor) => favor.sender.id !== session?.user.id),
+    members: JSON.parse(group.members) as minimalUser[],
+    admins: JSON.parse(group.admins) as minimalUser[]
+  }}) as favorGroup[]
 
   return (
     <main className="flex-1 flex flex-col p-4 overflow-hidden">
@@ -38,7 +49,12 @@ export default async function Home() {
         </DropdownMenu>
       </PageTitle>
 
-      <FavorFilterer receivedFavors={session?.user.receivedFavors} sentFavors={session?.user.sentFavors} user={session?.user}/>
+      <FavorFilterer
+        receivedFavors={session?.user.receivedFavors}
+        sentFavors={session?.user.sentFavors}
+        groupFavors={groupFavors}
+        user={session?.user}
+      />
     </main>
   );
 }

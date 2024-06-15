@@ -1,13 +1,15 @@
 "use client"
-import { CalendarIcon, UserIcon } from "lucide-react";
+import { CalendarIcon, ComponentIcon, UserIcon } from "lucide-react";
 import React, { useState } from "react";
 import { favor } from "@/auth";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 type FavorProps = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> & {
   favor: favor,
+  groupName?: string,
   isSender: boolean, // Added prop to indicate if current user is the sender
   onDecline: () => void, // Callback function for declining the favor
   onSetActive: () => void, // Callback function for setting favor to active
@@ -18,10 +20,12 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
   isSender,
   onDecline,
   onSetActive,
+  groupName,
   className,
   ...props
 }, ref ) => {
   const [collapsed, setCollapsed] = useState(true);
+  const isFromGroup = favor.groupId
   
   const handleDecline = () => {
     // Implement logic to decline the favor
@@ -43,10 +47,17 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
         <CardDescription className={collapsed ? 'line-clamp-2' : ''}>{favor.description}</CardDescription>
       </CardHeader>
       <CardFooter className="flex-col items-start gap-2 p-4 2xs:p-6 !pt-0">
-        <div className="flex items-center gap-2">
-          <UserIcon />
-          @{favor.sender.username}
-        </div>
+        {isFromGroup ? (
+          <Link href={`/groups/${favor.groupId}#favor-${favor.id}`} className="flex items-center gap-2">
+            <ComponentIcon />
+            {groupName} - @{favor.sender.username}
+          </Link>
+        ) : (
+          <Link href={`/profile/${isSender ? favor.receiver?.id : favor.sender.id}`} className="flex items-center gap-2">
+            <UserIcon />
+            @{isSender ? favor.receiver?.username : favor.sender.username}
+          </Link>
+        )}
         <div className="flex items-center gap-2">
           <CalendarIcon />
           Due Date: {new Date(favor.dueDate).toLocaleDateString()}

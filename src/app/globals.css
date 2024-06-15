@@ -50,6 +50,10 @@
   }
 }
 
+* {
+  scroll-behavior: smooth;
+}
+
 div[data-radix-popper-content-wrapper] {
   width: calc(100% - 32px) !important;
 }
