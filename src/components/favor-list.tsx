@@ -1,10 +1,11 @@
 "use client"
-import { favor } from "@/auth";
-import { useEffect, useRef } from "react";
 import { ScrollArea } from "./ui/scroll-area";
+import { useEffect, useRef } from "react";
 import { FavorComp } from "./favor-comp";
+import { Session } from "next-auth";
+import { favor } from "@/auth";
 
-export const FavorList = ({ favors, className, ...props }: { favors: favor[], className?: string }) => {
+export const FavorList = ({ user, favors, className, ...props }: { user?: Session["user"] | null, favors: favor[], className?: string }) => {
   const lastItemRef = useRef<HTMLDivElement | null>(null);
   
   useEffect(() => {
@@ -21,6 +22,9 @@ export const FavorList = ({ favors, className, ...props }: { favors: favor[], cl
           className="mt-2 first:mt-0"
           key={`favor-${favor.id}-${favor.sender.id}-${favor.favorValue}`}
           ref={index === favors.length - 1 ? lastItemRef : null}
+          isSender={favor.sender.id === user?.id}
+          onDecline={() => {}}
+          onSetActive={() => {}}
         />
       ))}
     </ScrollArea>

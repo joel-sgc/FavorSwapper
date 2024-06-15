@@ -74,7 +74,7 @@ const GroupPage = async ({ params }: { params: { id: string }}) => {
           </Drawer>
         </div>
       ) : (
-        <FavorList favors={favors} className="w-full h-full flex-1"/>   // FAVOR LIST
+        <FavorList user={session?.user} favors={favors} className="w-full h-full flex-1"/>   // FAVOR LIST
       )}
     </main>
   )
