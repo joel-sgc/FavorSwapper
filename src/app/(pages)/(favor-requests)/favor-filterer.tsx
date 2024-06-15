@@ -1,17 +1,17 @@
 "use client"
-import { favor } from "@/auth";
-import { FavorComp } from "@/components/favor-comp";
-import { badgeVariants } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { badgeVariants } from "@/components/ui/badge";
+import { FavorComp } from "@/components/favor-comp";
+import { Session } from "next-auth";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
-import { Session } from "next-auth";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
+import { favor } from "@/auth";
 
 export const FavorFilterer = ({ receivedFavors = [], sentFavors = [], user }: { receivedFavors?: favor[], sentFavors?: favor[], user?: Session["user"] }) => {
   const [selected, setSelected] = useState<string[]>(['received']);
 
-  const groupFavors = user?.receivedFavors.filter((favor) => favor.groupId && favor.sender.id !== user.id);
+  const groupFavors: favor[] = [] //user?.receivedFavors.filter((favor) => favor.groupId && favor.sender.id !== user.id);
   
   const isReceived = (selected.includes('received') && receivedFavors) as boolean;
   const isSent = (selected.includes('sent') && sentFavors) as boolean;
@@ -48,7 +48,7 @@ export const FavorFilterer = ({ receivedFavors = [], sentFavors = [], user }: { 
         </label>
       </div>
 
-      {(receivedFavors.length === 0 && sentFavors.length === 0 && groupFavors?.length === 0) ? (
+      {(receivedFavors.length === 0 && sentFavors.length === 0 && groupFavors.length === 0) ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center border-t-2">
           <h1 className="text-5xl font-semibold">No Favors</h1>
           <p className="text-lg text-muted-foreground">You have no favor requests to display</p>
@@ -57,19 +57,40 @@ export const FavorFilterer = ({ receivedFavors = [], sentFavors = [], user }: { 
         <ScrollArea className="flex-1 max-h-[631px] border-t-2 pt-2 px-2 pb-[56px] overflow-auto">
           {isReceived &&  (
             receivedFavors?.map((favor) => (
-              <FavorComp className="mt-2" key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`} favor={favor}/>
+              <FavorComp
+                key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`}
+                favor={favor}
+                className="mt-2"
+                isSender={favor.sender.id === user?.id}
+                onDecline={() => {}}
+                onSetActive={() => {}}
+              />
             ))
           )}
 
           {isSent && (
             sentFavors?.map((favor) => (
-              <FavorComp className="mt-2" key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`} favor={favor}/>
+              <FavorComp
+                key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`}
+                favor={favor}
+                className="mt-2"
+                isSender={favor.sender.id === user?.id}
+                onDecline={() => {}}
+                onSetActive={() => {}}
+              />
             ))
           )}
 
           {isSent && (
             groupFavors?.map((favor) => (
-              <FavorComp className="mt-2" key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`} favor={favor}/>
+              <FavorComp
+                key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`}
+                favor={favor}
+                className="mt-2"
+                isSender={favor.sender.id === user?.id}
+                onDecline={() => {}}
+                onSetActive={() => {}}
+              />
             ))
           )}
         </ScrollArea>

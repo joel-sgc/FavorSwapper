@@ -207,7 +207,7 @@ export const FavorForm = ({ user, friend, group, setOpen, className, ...props }:
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0">
                     <Command>
-                      <CommandInput autoComplete="off" autoFocus={false} placeholder="Search Favor Friends..." />
+                      <CommandInput tabIndex={-1} autoComplete="off" placeholder="Search Favor Friends..." />
                       <CommandEmpty>No Favor Friends found :&#40;</CommandEmpty>
                       <CommandGroup>
                         {user.friends?.map((friend) => (
