@@ -5,21 +5,38 @@ import { type ThemeProviderProps } from "next-themes/dist/types";
 import { usePathname, useRouter } from "next/navigation";
 import PullToRefresh from "pulltorefreshjs";
 import { Session } from "next-auth";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
+import { serverRevalidate } from "@/lib/server-actions";
 
 export const MiddlewareProvider = ({ session, children, ...props }: { session: Session | null, children: ReactNode } & ThemeProviderProps ) => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const standalone = window.matchMedia("(display-mode: standalone)").matches
+  useEffect(() => {
+    const standalone = window.matchMedia("(display-mode: standalone)").matches
 
-  if (standalone) {
-    PullToRefresh.init({
-      onRefresh() {
-        router.refresh()
-      },
-    })
-  }
+    function iOS() {
+      return [
+        'iPad Simulator',
+        'iPhone Simulator',
+        'iPod Simulator',
+        'iPad',
+        'iPhone',
+        'iPod'
+      ].includes(navigator.platform)
+      // iPad on iOS 13 detection
+      || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+    }
+    
+
+    if (standalone && iOS()) {
+      PullToRefresh.init({
+        onRefresh() {
+          serverRevalidate('/', 'layout');
+        },
+      })
+    }
+  }, [])
 
 
   // If not logged in, force redirect to login

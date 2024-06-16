@@ -55,7 +55,7 @@ export const FavorFilterer = ({
             isReceived && "bg-primary text-background"
           )}
           onContextMenu={(e) => e.preventDefault()}
-          onChange={() => {if (isSent) toggleCategory("received")}}
+          onChange={() => {if (isSent && sentFavors.length > 0) toggleCategory("received")}}
         >
           <input type="checkbox" className="hidden"/>
           Received
@@ -68,7 +68,7 @@ export const FavorFilterer = ({
             isSent && "bg-primary text-background"
           )}
           onContextMenu={(e) => e.preventDefault()}
-          onChange={() => {if (isReceived) toggleCategory("sent")}}
+          onChange={() => {if (isReceived && receivedFavors.length > 0) toggleCategory("sent")}}
         >
           <input type="checkbox" className="hidden"/>
           Sent
