@@ -15,7 +15,7 @@ export default async function Home() {
     }
   }})).map((group) => { return {
     ...group, 
-    favors: (JSON.parse(group.favors) as favor[]).filter((favor) => favor.sender.id !== session?.user.id),
+    favors: JSON.parse(group.favors) as favor[],
     members: JSON.parse(group.members) as minimalUser[],
     admins: JSON.parse(group.admins) as minimalUser[]
   }}) as favorGroup[]
@@ -51,7 +51,7 @@ export default async function Home() {
 
       <FavorFilterer
         receivedFavors={session?.user.receivedFavors}
-        sentFavors={session?.user.sentFavors}
+        sentFavors={session?.user.sentFavors.filter((favor) => !favor.groupId)}
         groupFavors={groupFavors}
         user={session?.user}
       />

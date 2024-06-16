@@ -63,6 +63,14 @@ div[data-radix-popper-content-wrapper] {
   height: 0px !important;
 }
 
+.hidden-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hidden-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 main {
   margin-top: 82px;
   margin-bottom: 74px;

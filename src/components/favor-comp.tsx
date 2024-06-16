@@ -6,18 +6,20 @@ import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/c
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { Session } from "next-auth";
+import { cn } from "@/lib/utils";
 
 type FavorProps = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> & {
   favor: favor,
+  user?: Session["user"] | null
   groupName?: string,
-  isSender: boolean, // Added prop to indicate if current user is the sender
   onDecline: () => void, // Callback function for declining the favor
   onSetActive: () => void, // Callback function for setting favor to active
 }
 
-export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
+export const FavorCompGroup = React.forwardRef<HTMLDivElement, FavorProps>(({
   favor,
-  isSender,
+  user,
   onDecline,
   onSetActive,
   groupName,
@@ -25,7 +27,7 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
   ...props
 }, ref ) => {
   const [collapsed, setCollapsed] = useState(true);
-  const isFromGroup = favor.groupId
+  const isSender = favor.sender.id === user?.id;
   
   const handleDecline = () => {
     // Implement logic to decline the favor
@@ -44,20 +46,13 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
           <Badge className="h-8 min-w-8 items-center justify-center">{favor.favorValue}</Badge>
           {favor.title}
         </CardTitle>
-        <CardDescription className={collapsed ? 'line-clamp-2' : ''}>{favor.description}</CardDescription>
+        <CardDescription className={cn("transition-all", collapsed ? 'line-clamp-2' : '')}>{favor.description}</CardDescription>
       </CardHeader>
       <CardFooter className="flex-col items-start gap-2 p-4 2xs:p-6 !pt-0">
-        {isFromGroup ? (
-          <Link href={`/groups/${favor.groupId}#favor-${favor.id}`} className="flex items-center gap-2">
-            <ComponentIcon />
-            {groupName} - @{favor.sender.username}
-          </Link>
-        ) : (
-          <Link href={`/profile/${isSender ? favor.receiver?.id : favor.sender.id}`} className="flex items-center gap-2">
-            <UserIcon />
-            @{isSender ? favor.receiver?.username : favor.sender.username}
-          </Link>
-        )}
+        <Link href={`/groups/${favor.groupId}#favor-${favor.id}`} className="flex items-center gap-2">
+          <ComponentIcon />
+          {groupName && `${groupName} - `}@{favor.sender.username}
+        </Link>
         <div className="flex items-center gap-2">
           <CalendarIcon />
           Due Date: {new Date(favor.dueDate).toLocaleDateString()}
@@ -71,4 +66,47 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
       </CardFooter>
     </Card>
   );
-});
+})
+
+
+
+
+export const FavorCompFriend = React.forwardRef<HTMLDivElement, FavorProps>(({
+  favor,
+  user,
+  onDecline,
+  onSetActive,
+  className,
+  ...props
+}, ref ) => {
+  const [collapsed, setCollapsed] = useState(true);
+  const isSender = favor.sender.id === user?.id;
+
+  return (
+    <Card className={className} {...props} ref={ref}>
+      <CardHeader onClick={() => setCollapsed(!collapsed)} className="p-4 2xs:p-6">
+        <CardTitle className="flex items-center gap-2">
+          <Badge className="h-8 min-w-8 items-center justify-center">{favor.favorValue}</Badge>
+          {favor.title}
+        </CardTitle>
+        <CardDescription className={cn("transition-all", collapsed ? 'line-clamp-2' : '')}>{favor.description}</CardDescription>
+      </CardHeader>
+      <CardFooter className="flex-col items-start gap-2 p-4 2xs:p-6 !pt-0">
+        <Link href={`/profile/${isSender ? favor.receiver?.id : favor.sender.id}`} className="flex items-center gap-2">
+          <UserIcon />
+          @{isSender ? favor.receiver?.username : favor.sender.username}
+        </Link>
+        <div className="flex items-center gap-2">
+          <CalendarIcon />
+          Due Date: {new Date(favor.dueDate).toLocaleDateString()}
+        </div>
+        {!isSender && (
+          <div className="flex items-center justify-between w-full mt-2 gap-2">
+            <Button variant='destructive' size='sm'>Decline ({favor.favorValue} Point{favor.favorValue > 1 && 's'})</Button>
+            <Button size='sm'>Mark Active</Button>
+          </div>
+        )}
+      </CardFooter>
+    </Card>
+  )
+})

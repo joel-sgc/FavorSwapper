@@ -26,8 +26,8 @@ const GroupPage = async ({ params }: { params: { id: string }}) => {
   const favors = JSON.parse(group?.favors as string) as favor[]
 
   if (isMember) return (
-    <main className="flex-1 flex flex-col p-4 pt-0 pb-[72px]">
-      <PageTitle className="justify-between flex-wrap sticky top-[82px] z-10 pt-4 bg-background">
+    <main className="flex-1 flex flex-col p-4 gap-4">
+      <PageTitle className="justify-between border-b-2 pb-4">
         <div className="flex items-center gap-2">
           <Button variant='secondary' size='icon' className="mr-2" asChild>
             <Link href='/groups'><ChevronLeftIcon/></Link>
@@ -47,7 +47,7 @@ const GroupPage = async ({ params }: { params: { id: string }}) => {
           </Button>
         </GroupInfoDrawer>
 
-        <hr className="w-full my-2 shrink-0 border-t-0 h-0.5 bg-border"/>
+        {/* <hr className="w-full my-2 shrink-0 border-t-0 h-0.5 bg-border"/> */}
       </PageTitle>
 
 
@@ -74,7 +74,7 @@ const GroupPage = async ({ params }: { params: { id: string }}) => {
           </Drawer>
         </div>
       ) : (
-        <FavorList user={session?.user} favors={favors} className="w-full h-full flex-1"/>   // FAVOR LIST
+        <FavorList user={session?.user} favors={favors} className="w-full h-full flex-1 overflow-auto hidden-scrollbar max-h-[calc(100dvh-262px)] pb-[56px]"/>   // FAVOR LIST
       )}
     </main>
   )
