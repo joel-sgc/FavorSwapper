@@ -59,7 +59,7 @@ export const FavorCompGroup = React.forwardRef<HTMLDivElement, FavorProps>(({
         </div>
         {!isSender && (
           <div className="flex items-center justify-between w-full mt-2 gap-2">
-            <Button variant='destructive' size='sm'>Decline ({favor.favorValue} Point{favor.favorValue > 1 && 's'})</Button>
+            <Button variant='secondary' size='sm'>Ignore</Button>
             <Button size='sm'>Mark Active</Button>
           </div>
         )}

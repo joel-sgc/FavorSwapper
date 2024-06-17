@@ -27,6 +27,12 @@ export const MiddlewareProvider = ({ session, children, ...props }: { session: S
       // iPad on iOS 13 detection
       || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
     }
+
+    if (iOS()) {
+      document.querySelectorAll('.favor-form-drawer').forEach((el) => {
+        // el.style.bottom = ''
+      })
+    }
     
 
     if (standalone && iOS()) {

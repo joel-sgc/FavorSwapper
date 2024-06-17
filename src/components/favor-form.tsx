@@ -2,7 +2,7 @@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "./ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -85,7 +85,7 @@ export const FavorForm = ({ user, friend, group, setOpen, className, ...props }:
             <FormItem>
               <FormLabel>Favor Title</FormLabel>
               <FormControl>
-                <Input disabled={loading} autoComplete="off" placeholder="Favor Request Title" {...field} />
+                <Input {...field} disabled={loading} autoComplete="off" placeholder="Favor Request Title" />
               </FormControl>
               <FormDescription>A brief title for the favor you are requesting.</FormDescription>
               <FormMessage />
@@ -100,7 +100,7 @@ export const FavorForm = ({ user, friend, group, setOpen, className, ...props }:
             <FormItem>
               <FormLabel>Favor Description</FormLabel>
               <FormControl>
-                <Textarea disabled={loading} autoComplete="off" placeholder="Favor Request Description" {...field} />
+                <Textarea {...field} disabled={loading} autoComplete="off" placeholder="Favor Request Description" />
               </FormControl>
               <FormDescription>A detailed description of what you need help with.</FormDescription>
               <FormMessage />
@@ -254,8 +254,8 @@ export const FavorFormDrawer = ({ user, friend, group, children, className, ...p
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger {...props} className={className}>{children}</DrawerTrigger>
-      <DrawerContent className="p-4 pt-0 !h-[90dvh] !max-h-[90dvh]">
-        <ScrollArea className="overflow-auto h-full max-h-[calc(90dvh-48px)]">
+      <DrawerContent className={cn("favor-form-drawer p-4 pt-0")}>
+        <ScrollArea className="overflow-auto h-fit max-h-[calc(90dvh-48px)]">
           <FavorForm group={group} setOpen={setOpen} user={user} friend={friend} className="mx-2 my-[6px]"/>
         </ScrollArea>
       </DrawerContent>

@@ -9,6 +9,9 @@ import { Button } from "../ui/button";
 import { Session } from "next-auth";
 import { useState } from "react";
 import Link from "next/link";
+import { Popover } from "../ui/popover";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import useLongPress from "@/lib/use-long-press";
 
 const navLinks = [
   {
@@ -39,9 +42,14 @@ const navLinks = [
 ]
 
 export const MobileDrawer = ({ session }: { session: Session | null }) => {
+  const [ openTheme, setOpenTheme ] = useState(false);
   const [ open, setOpen ] = useState(false);
   const { theme, setTheme } = useTheme();
-  
+
+  const toggleDarkLightMode = () => setTheme(theme === 'dark' ? 'light' : 'dark');
+
+  const longPressEvent = useLongPress({ onClick: toggleDarkLightMode, onLongPress: () => setOpenTheme(!openTheme)}, { delay: 500, shouldPreventDefault: true });
+
   return (
     <Drawer direction="left" open={open} onOpenChange={setOpen}>
       <DrawerTrigger className="md:hidden">
@@ -92,7 +100,7 @@ export const MobileDrawer = ({ session }: { session: Session | null }) => {
               </Link>
             </Button>
 
-            <Button size='icon' onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+            <Button size='icon' {...longPressEvent} onContextMenu={(e) => e.preventDefault()}>
               {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
             </Button>
           </div>

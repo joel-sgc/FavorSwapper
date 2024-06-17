@@ -71,11 +71,10 @@ div[data-radix-popper-content-wrapper] {
   scrollbar-width: none;  /* Firefox */
 }
 
-
 /* iOS devices only */
 /* @supports (-webkit-touch-callout: none) {
-  .bottom-0 {
-    bottom: env(keyboard-inset-height, 0px) !important;
+  .favor-form-drawer {
+    bottom: 300px !important;
   }
 } */
 
