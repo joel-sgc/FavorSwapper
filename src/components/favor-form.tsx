@@ -21,8 +21,9 @@ import { Input } from "./ui/input";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { z } from "zod";
+import { iOS } from "./middleware-provider";
 
-export const FavorForm = ({ user, friend, group, setOpen, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, setOpen?: Dispatch<SetStateAction<boolean>>, className?: string }) => {
+export const FavorForm = ({ user, friend, group, setOpen, setFocused, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, setOpen?: Dispatch<SetStateAction<boolean>>, setFocused?: Dispatch<SetStateAction<boolean>>, className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -249,14 +250,15 @@ export const FavorForm = ({ user, friend, group, setOpen, className, ...props }:
 }
 
 export const FavorFormDrawer = ({ user, friend, group, children, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, children: ReactNode, className?: string }) => {
-  const [open, setOpen] = useState(false);
-  
+  const [open, setOpen] = useState(true);
+  const [focused, setFocused] = useState(false);
+
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger {...props} className={className}>{children}</DrawerTrigger>
-      <DrawerContent className={cn("favor-form-drawer p-4 pt-0")}>
+      <DrawerContent className={cn(focused ? 'bottom-0' : '', !iOS() ? '!h-min' : '', "p-4 pt-0")}>
         <ScrollArea className="overflow-auto h-fit max-h-[calc(90dvh-48px)]">
-          <FavorForm group={group} setOpen={setOpen} user={user} friend={friend} className="mx-2 my-[6px]"/>
+          <FavorForm setFocused={setFocused} group={group} setOpen={setOpen} user={user} friend={friend} className="mx-2 my-[6px]"/>
         </ScrollArea>
       </DrawerContent>
     </Drawer>

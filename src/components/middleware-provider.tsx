@@ -15,19 +15,6 @@ export const MiddlewareProvider = ({ session, children, ...props }: { session: S
   useEffect(() => {
     const standalone = window.matchMedia("(display-mode: standalone)").matches
 
-    function iOS() {
-      return [
-        'iPad Simulator',
-        'iPhone Simulator',
-        'iPod Simulator',
-        'iPad',
-        'iPhone',
-        'iPod'
-      ].includes(navigator?.userAgentData?.platform ?? navigator?.platform)
-      // iPad on iOS 13 detection
-      || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
-    }
-
     if (iOS()) {
       document.querySelectorAll('.favor-form-drawer').forEach((el) => {
         // el.style.bottom = ''
@@ -56,4 +43,17 @@ export const MiddlewareProvider = ({ session, children, ...props }: { session: S
   }
 
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+}
+
+export function iOS() {
+  return [
+    'iPad Simulator',
+    'iPhone Simulator',
+    'iPod Simulator',
+    'iPad',
+    'iPhone',
+    'iPod'
+  ].includes(navigator?.userAgentData?.platform ?? navigator?.platform)
+  // iPad on iOS 13 detection
+  || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
 }
