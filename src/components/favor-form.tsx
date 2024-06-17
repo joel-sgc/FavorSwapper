@@ -250,7 +250,7 @@ export const FavorForm = ({ user, friend, group, setOpen, setFocused, className,
 }
 
 export const FavorFormDrawer = ({ user, friend, group, children, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, children: ReactNode, className?: string }) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
 
   return (
