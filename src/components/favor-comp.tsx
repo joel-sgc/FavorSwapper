@@ -1,12 +1,12 @@
 "use client"
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { CalendarIcon, ComponentIcon, UserIcon } from "lucide-react";
 import React, { useState } from "react";
-import { favor } from "@/auth";
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
-import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import Link from "next/link";
 import { Session } from "next-auth";
+import { Badge } from "./ui/badge";
+import { favor } from "@/auth";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 type FavorProps = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> & {

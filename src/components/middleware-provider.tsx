@@ -3,10 +3,10 @@
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { type ThemeProviderProps } from "next-themes/dist/types";
 import { usePathname, useRouter } from "next/navigation";
+import { serverRevalidate } from "@/lib/server-actions";
+import { ReactNode, useEffect } from "react";
 import PullToRefresh from "pulltorefreshjs";
 import { Session } from "next-auth";
-import { ReactNode, useEffect } from "react";
-import { serverRevalidate } from "@/lib/server-actions";
 
 export const MiddlewareProvider = ({ session, children, ...props }: { session: Session | null, children: ReactNode } & ThemeProviderProps ) => {
   const pathname = usePathname();

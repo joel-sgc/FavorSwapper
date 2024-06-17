@@ -1,9 +1,9 @@
 "use server"
-import { createId } from '@paralleldrive/cuid2';
-import prisma from "@/prisma/client";
 import { friendRequest, minimalUser } from '@/auth';
+import { createId } from '@paralleldrive/cuid2';
 import { revalidatePath } from 'next/cache';
-import { Session, User } from 'next-auth';
+import prisma from "@/prisma/client";
+import { Session } from 'next-auth';
 
 export const sendFriendReq = async (username: string, user: Session["user"]) => {
   try {

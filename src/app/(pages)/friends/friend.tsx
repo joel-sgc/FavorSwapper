@@ -6,9 +6,9 @@ import { removeFriend } from "@/lib/friendActions";
 import { Button } from "@/components/ui/button";
 import { minimalUser } from "@/auth";
 import { Session } from "next-auth";
+import { useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
-import { useState } from "react";
 
 export const Friend = ({ friend, user }: { friend: minimalUser, user: Session["user"] }) => {
   const [open, setOpen] = useState(false);

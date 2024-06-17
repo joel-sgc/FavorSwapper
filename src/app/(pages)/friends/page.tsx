@@ -2,8 +2,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { IncomingFriendRequest, OutgoingFriendRequest } from "./friend-request";
 import { AddFriendsForm } from "./add-friends-form";
 import { PageTitle } from "@/components/page-title";
-import { UserPlus2 } from "lucide-react";
 import { auth, minimalUser } from "@/auth";
+import { UserPlus2 } from "lucide-react";
 import { Friend } from "./friend";
 
 const FriendsPage = async() => {

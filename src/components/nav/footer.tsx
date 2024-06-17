@@ -1,15 +1,15 @@
 "use client"
 import { ArrowLeftRightIcon, Coins, PlusIcon, UserPlus2, Users2Icon } from "lucide-react";
-import { Button } from "../ui/button";
-import Link from "next/link";
+import { getGroupFromID } from "@/lib/server-actions";
 import { FavorFormDrawer } from "../favor-form";
-import { Session } from "next-auth";
+import { usePathname } from "next/navigation";
 import { FavorGroup } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { getGroupFromID } from "@/lib/server-actions";
+import { Button } from "../ui/button";
+import { Session } from "next-auth";
+import Link from "next/link";
 
-export const Footer = ({ session }: { session: Session }) => {
+export const Footer = ({ session }: { session: Session | null }) => {
   const [group, setGroup] = useState<FavorGroup | undefined>();
   const pathname = usePathname();
 
@@ -25,7 +25,7 @@ export const Footer = ({ session }: { session: Session }) => {
   return (
     <>
       <Button asChild size='icon' className="fixed bottom-[74px] right-4 mb-4 -mt-10 scale-100 border-2">
-        <FavorFormDrawer group={group} user={session?.user}>
+        <FavorFormDrawer group={group} user={session?.user as Session["user"]}>
           <PlusIcon/>
         </FavorFormDrawer>
       </Button>

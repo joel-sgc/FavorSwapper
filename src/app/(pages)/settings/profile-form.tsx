@@ -1,11 +1,9 @@
 "use client"
  
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdateProfile } from "@/lib/updateProfile";
 import { deleteImage } from "@/lib/imageActions";
 import { Button } from "@/components/ui/button";
@@ -14,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { Session } from "next-auth";
 import { useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 
 export const profileFormSchema = z.object({
   name: z.string().min(2).max(50),

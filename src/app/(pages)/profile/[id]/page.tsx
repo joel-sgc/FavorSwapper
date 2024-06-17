@@ -1,12 +1,12 @@
-import { auth, minimalUser, socials } from "@/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { removeFriend, sendFriendReq } from "@/lib/friendActions";
-import prisma from "@/prisma/client"
-import { Session } from "next-auth";
+import { Button } from "@/components/ui/button";
 import { revalidatePath } from "next/cache";
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { auth, socials } from "@/auth";
+import prisma from "@/prisma/client";
+import { Session } from "next-auth";
+import Link from "next/link";
 
 const ProfilePage = async ({ params }: { params: { id: string }}) => {
   const session = await auth();

@@ -1,8 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Apple, Google } from "@/components/svg";
 import { Button } from "@/components/ui/button";
-import { signIn } from "@/auth";
 import { Input } from "@/components/ui/input";
+import { signIn } from "@/auth";
 
 export default async function Page() {
   

@@ -1,4 +1,3 @@
-import { Session } from "next-auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,10 +5,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import Link from "next/link";
+import { Session } from "next-auth";
 import { User } from "lucide-react";
+import Link from "next/link";
 
 export const ProfileDropdown = ({ session }: { session: Session | null }) => {
   return (

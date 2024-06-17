@@ -1,6 +1,5 @@
-import { NextResponse } from "next/server";
 import { v2 as cloudinary } from 'cloudinary';
-
+import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 
 cloudinary.config({

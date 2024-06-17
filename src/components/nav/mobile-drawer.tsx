@@ -4,11 +4,11 @@ import { ArrowLeftRightIcon, Coins, Menu, MoonIcon, Settings, SunIcon, User, Use
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from "../ui/drawer";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
 import { Button } from "../ui/button";
 import { Session } from "next-auth";
 import { useState } from "react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 
 const navLinks = [
   {

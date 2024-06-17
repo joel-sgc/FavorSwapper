@@ -1,7 +1,7 @@
 "use client"
+import { FavorCompGroup } from "./favor-comp";
 import { ScrollArea } from "./ui/scroll-area";
 import { useEffect, useRef } from "react";
-import { FavorCompGroup } from "./favor-comp";
 import { Session } from "next-auth";
 import { favor } from "@/auth";
 

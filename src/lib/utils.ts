@@ -1,9 +1,9 @@
-import { minimalUser } from "@/auth"
-import prisma from "@/prisma/client"
-import { User } from "@prisma/client"
-import { type ClassValue, clsx } from "clsx"
-import { Session } from "next-auth"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { User } from "@prisma/client";
+import { minimalUser } from "@/auth";
+import prisma from "@/prisma/client";
+import { Session } from "next-auth";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

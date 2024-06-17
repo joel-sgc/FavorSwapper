@@ -2,8 +2,14 @@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "./ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
+import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { getUserFromID } from "@/lib/server-actions";
+import { sendFavorReq } from "@/lib/sendFavorReq";
+import { ScrollArea } from "./ui/scroll-area";
+import { cn, minifyUser } from "@/lib/utils";
 import { FavorGroup } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { Textarea } from "./ui/textarea";
@@ -13,14 +19,8 @@ import { minimalUser } from "@/auth";
 import { Session } from "next-auth";
 import { Input } from "./ui/input";
 import { format } from "date-fns";
-import { Dispatch, ReactNode, SetStateAction, useState } from "react";
-import { cn, minifyUser } from "@/lib/utils";
 import { toast } from "sonner";
 import { z } from "zod";
-import { sendFavorReq } from "@/lib/sendFavorReq";
-import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
-import { ScrollArea } from "./ui/scroll-area";
-import { getUserFromID } from "@/lib/server-actions";
 
 export const FavorForm = ({ user, friend, group, setOpen, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, setOpen?: Dispatch<SetStateAction<boolean>>, className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);
@@ -254,7 +254,7 @@ export const FavorFormDrawer = ({ user, friend, group, children, className, ...p
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger {...props} className={className}>{children}</DrawerTrigger>
-      <DrawerContent className="p-4 pt-0 max-h-[90dvh]">
+      <DrawerContent className="p-4 pt-0 !h-[90dvh] !max-h-[90dvh]">
         <ScrollArea className="overflow-auto h-full max-h-[calc(90dvh-48px)]">
           <FavorForm group={group} setOpen={setOpen} user={user} friend={friend} className="mx-2 my-[6px]"/>
         </ScrollArea>

@@ -7,7 +7,7 @@ import { auth } from "@/auth";
 const PointsPage = async () => {
   const session = await auth();
 
-  const activeDays = session?.user.activeDaysHistory as Date[];
+  const activeDays = session?.user.activeDaysHistory as Date[] ?? [];
   let streak = 1;
   let adReward = 0;
 
@@ -31,7 +31,7 @@ const PointsPage = async () => {
     adReward = 3;
   }
 
-  const activeDaysThisMonth = session?.user.activeDaysHistory.filter((date) => new Date(date).getMonth() === new Date().getMonth()) as Date[];
+  const activeDaysThisMonth = session?.user.activeDaysHistory.filter((date) => new Date(date).getMonth() === new Date().getMonth()) as Date[] ?? [];
   const activityPercentage = Math.round(((activeDaysThisMonth.length / new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate()) * 100) * 100) / 100;
 
   return (

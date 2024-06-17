@@ -72,9 +72,9 @@ export default async function RootLayout({
           disableTransitionOnChange
           session={session}
         >
-          {session && <Header session={session}/>}
+          {true && <Header session={session}/>}
           {children}
-          {session && <Footer session={session}/>}
+          {true && <Footer session={session}/>}
         </MiddlewareProvider>
         <Toaster richColors/>
       </body>
