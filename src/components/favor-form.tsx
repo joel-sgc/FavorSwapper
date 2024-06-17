@@ -210,7 +210,7 @@ export const FavorForm = ({ user, friend, group, setOpen, className, ...props }:
                       <CommandInput tabIndex={-1} autoComplete="off" placeholder="Search Favor Friends..." />
                       <CommandEmpty>No Favor Friends found :&#40;</CommandEmpty>
                       <CommandGroup>
-                        {user.friends?.map((friend) => (
+                        {user && user.friends?.map((friend) => (
                           <CommandItem
                             value={friend.name}
                             key={friend.id}
