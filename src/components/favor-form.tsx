@@ -7,7 +7,6 @@ import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getUserFromID } from "@/lib/server-actions";
-import { sendFavorReq } from "@/lib/sendFavorReq";
 import { ScrollArea } from "./ui/scroll-area";
 import { cn, minifyUser } from "@/lib/utils";
 import { FavorGroup } from "@prisma/client";
@@ -22,6 +21,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { z } from "zod";
 import { iOS } from "./middleware-provider";
+import { sendFavorReq } from "@/lib/favorActions";
 
 export const FavorForm = ({ user, friend, group, setOpen, setFocused, className, ...props }: { user: Session["user"], friend?: minimalUser, group?: FavorGroup, setOpen?: Dispatch<SetStateAction<boolean>>, setFocused?: Dispatch<SetStateAction<boolean>>, className?: string }) => {
   const [openUserSelect, setOpenUserSelect] = useState(false);

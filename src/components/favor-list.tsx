@@ -25,8 +25,6 @@ export const FavorList = ({ user, favors, groupName, className, ...props }: { us
           id={`favor-${favor.id}`}
           key={`favor-${favor.id}-${favor.sender.id}-${favor.favorValue}`}
           ref={index === favors.length - 1 ? lastItemRef : null}
-          onDecline={() => {}}
-          onSetActive={() => {}}
         />
       ))}
     </ScrollArea>

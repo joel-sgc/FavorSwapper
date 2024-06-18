@@ -29,6 +29,7 @@ model User {
   favorPoints             Int             @default(4)
   sentFavors              String          @default("[]")
   receivedFavors          String          @default("[]")
+  favorHistory            String          @default("[]")
   favorGroups             String[]
 
   sentFriendRequests      String          @default("[]")

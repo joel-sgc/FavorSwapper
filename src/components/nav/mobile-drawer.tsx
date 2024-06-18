@@ -76,9 +76,10 @@ export const MobileDrawer = ({ session }: { session: Session | null }) => {
             </Avatar>
 
             <div className="flex flex-col justify-between">
-              <span className="text-start font-semibold line-clamp-1">{session?.user.name} | @{session?.user?.username}</span>
-              <span className="text-start">Favor Points: {session?.user.favorPoints}</span>
+              <span className="text-start font-semibold line-clamp-1">{session?.user.name}</span>
+              <span className="text-start font-semibold line-clamp-1">@{session?.user?.username}</span>
             </div>
+            <span className="text-start text-primary font-semibold text-lg col-span-2">Favor Points: {session?.user.favorPoints}</span> 
           </div>
 
           <nav className="flex flex-col gap-4 pt-16">

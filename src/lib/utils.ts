@@ -19,7 +19,7 @@ export const minifyUser = ( user: Session["user"] | null | User ) => {
 }
 
 export const chargePoints = async ({ where, points }: { where: { username?: string, id?: string }, points: number }) => {
-  if (process.env.NODE_ENV === 'development' && points > 0) return { status: 200, message: "Success!" };
+  if (process.env.NODE_ENV === 'development') return { status: 200, message: "Success!" };
 
   const user = await prisma.user.findUnique({ where });
 

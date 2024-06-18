@@ -19,10 +19,13 @@ export const FavorFilterer = ({
   user?: Session["user"],
 }) => {
   const [showGroups, setShowGroups] = useState(false);
-  const [selected, setSelected] = useState<string>("received");
+  const [selected, setSelected] = useState<string>(receivedFavors.length > 0 ? "received" : "sent");
 
-  const isReceived = selected === "received" && receivedFavors.length > 0;
-  const isSent = selected === 'sent' && sentFavors.length > 0;
+  const isReceived = selected === "received";
+  const isSent = selected === 'sent';
+
+  const groupReceived = groupFavors.map((group) => {return {...group, favors: group.favors.filter((favor) => favor.sender.id !== user?.id)}})
+  const groupSent = groupFavors.map((group) => {return {...group, favors: group.favors.filter((favor) => favor.sender.id === user?.id)}})
 
   const toggleCategory = (category: "received" | "sent") => {
     setSelected(() =>
@@ -55,7 +58,7 @@ export const FavorFilterer = ({
             isReceived && "bg-primary text-background"
           )}
           onContextMenu={(e) => e.preventDefault()}
-          onChange={() => {if (isSent && sentFavors.length > 0) toggleCategory("received")}}
+          onChange={() => isSent && toggleCategory("received")}
         >
           <input type="checkbox" className="hidden"/>
           Received
@@ -68,16 +71,15 @@ export const FavorFilterer = ({
             isSent && "bg-primary text-background"
           )}
           onContextMenu={(e) => e.preventDefault()}
-          onChange={() => {if (isReceived && receivedFavors.length > 0) toggleCategory("sent")}}
+          onChange={() => isReceived && toggleCategory("sent")}
         >
           <input type="checkbox" className="hidden"/>
           Sent
         </label>
       </div>
 
-      {receivedFavors.length === 0 &&
-      sentFavors.length === 0 &&
-      groupFavors.length === 0 ? (
+      {((receivedFavors.length === 0 && isReceived) ||
+      (sentFavors.length === 0 && isSent)) ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center border-t-2">
           <h1 className="text-5xl font-semibold">No Favors</h1>
           <p className="text-lg text-muted-foreground">
@@ -93,8 +95,6 @@ export const FavorFilterer = ({
                 favor={favor}
                 user={user}
                 className="mt-2"
-                onDecline={() => {}}
-                onSetActive={() => {}}
               />
             ))}
 
@@ -105,23 +105,19 @@ export const FavorFilterer = ({
                 favor={favor}
                 user={user}
                 className="mt-2"
-                onDecline={() => {}}
-                onSetActive={() => {}}
               />
             ))}
 
           {showGroups && (
-            groupFavors.map((group) => group.favors.filter((favor) => isReceived ? favor.sender.id !== user?.id : favor.sender.id === user?.id).map((favor) => (
+            (isReceived ? groupReceived : groupSent).map((group) => group.favors.map((favor) => 
               <FavorCompGroup
-                key={`favor-group-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`}
+                key={`favor-group-to-user-${favor.id}-${user?.id}-${favor.groupId as string}`}
                 favor={favor}
                 groupName={group.name}
                 user={user}
                 className="mt-2"
-                onDecline={() => {}}
-                onSetActive={() => {}}
               />
-            ))))}
+            )))}
         </ScrollArea>
       )}
     </div>

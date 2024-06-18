@@ -20,6 +20,8 @@ export type favor = {
   sender: minimalUser
   receiver?: minimalUser
   groupId?: string
+  ignoring?: minimalUser[]
+  working?: minimalUser[]
 }
 
 export type favorGroup = {
@@ -73,6 +75,7 @@ declare module "next-auth" {
 
       sentFavors: favor[]
       receivedFavors: favor[]
+      favorHistory: favor[]
       sentFriendRequests: friendRequest[]
       receivedFriendRequests: friendRequest[]
     } & DefaultSession["user"]
@@ -88,6 +91,7 @@ declare module "next-auth" {
     // Stringified
     sentFavors: string      // Array of favors
     receivedFavors: string  // Array of favors
+    favorHistory: string    // Array of favors
     socials: string         // Object with socials
     friends: string         // Array of user IDs, names, and profile pictures
     sentFriendRequests: string
@@ -112,12 +116,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   events: {
     // Automatically assigns a username based on the user's email address
     createUser: async (message) => {
-      const username = message.user.email?.split('@')[0].toLowerCase();
+      const username = message.user.email?.split('@')[0].toLowerCase()
 
       await prisma.user.update({
         where: { email: message.user.email as string },
         data: { username: username?.substring(Math.min(username.length, 50)) }
       });
+
+      message.user.username = username?.substring(Math.min(username.length, 50)) as string;
     },
 
 
@@ -128,6 +134,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       message.session.user.sentFavors = JSON.parse(message.session.user.sentFavors ?? "[]");
       message.session.user.receivedFavors = JSON.parse(message.session.user.receivedFavors ?? "[]");
+      message.session.user.favorHistory = JSON.parse(message.session.user.favorHistory ?? "[]");
 
       message.session.user.sentFriendRequests = JSON.parse(message.session.user.sentFriendRequests ?? "[]");
       message.session.user.receivedFriendRequests = JSON.parse(message.session.user.receivedFriendRequests ?? "[]");
