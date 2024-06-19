@@ -22,6 +22,12 @@ export type favor = {
   groupId?: string
   ignoring?: minimalUser[]
   working?: minimalUser[]
+
+  // For favor history
+  completed?: boolean
+  completedAt?: Date
+  completionImage?: string
+  completionImageId?: string
 }
 
 export type favorGroup = {

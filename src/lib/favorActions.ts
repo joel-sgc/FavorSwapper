@@ -223,3 +223,64 @@ export const markActiveFavorReq = async ({ favor, user }: { favor: favor, user: 
     prisma.$disconnect();
   }
 }
+
+export const completeFavorReq = async ({ favor, user, image }: { favor: favor, user: Session["user"] | null, image: { image: string, imageId: string } }) => {
+  try {
+    // Check if user is logged in
+    if (!user) return { status: 401, message: "You must be logged in to accept a favor request." };
+
+    // Make sure the user has the favor request in their received favors
+    const dbUser = await prisma.user.findUnique({ where: { id: user.id }});
+    if (!(JSON.parse(dbUser?.receivedFavors as string) as favor[]).some((f) => f.id === favor.id)) return { status: 404, message: "Favor request not found." };
+
+
+    // Move favor to favor history
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        receivedFavors: JSON.stringify([
+          ...(JSON.parse(dbUser?.receivedFavors as string) as favor[]).filter((f) => f.id !== favor.id),
+        ]),
+        favorHistory: JSON.stringify([
+          ...JSON.parse(dbUser?.favorHistory as string),
+          {
+            ...favor,
+            completed: true,
+            completedAt: new Date(),
+            completionImage: image.image,
+            completionImageId: image.imageId
+          }
+        ])
+      }
+    });
+
+    const sender = await prisma.user.findUnique({ where: { id: favor.sender.id }});
+
+    await prisma.user.update({
+      where: { id: favor.sender.id },
+      data: {
+        sentFavors: JSON.stringify([
+          ...(JSON.parse(sender?.sentFavors as string) as favor[]).filter((f) => f.id !== favor.id),
+        ]),
+        favorHistory: JSON.stringify([
+          ...JSON.parse(sender?.favorHistory as string),
+          {
+            ...favor,
+            completed: true,
+            completedAt: new Date(),
+            completionImage: image.image,
+            completionImageId: image.imageId
+          }
+        ])
+      }
+    });
+
+    revalidatePath('/', 'layout');
+    return { status: 200, message: "Favor request completed." }
+  } catch (error) {
+    console.error(error);
+    return { status: 500, message: "An error occurred while completing the favor request." }
+  } finally {
+    prisma.$disconnect();
+  }
+}

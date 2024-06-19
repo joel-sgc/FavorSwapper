@@ -6,6 +6,8 @@ import { ArrowLeftRightIcon } from "lucide-react";
 import { FavorFilterer } from "./favor-filterer";
 import { Button } from "@/components/ui/button";
 import prisma from "@/prisma/client";
+import { FavorCompFriend, FavorCompGroup } from "@/components/favor-comp";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default async function Home() {
   const session = await auth();
@@ -28,7 +30,7 @@ export default async function Home() {
           <h1>Favor Requests</h1>
         </div>
 
-        <DropdownMenu >
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='secondary' size='icon'>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -43,7 +45,26 @@ export default async function Home() {
             <DropdownMenuSeparator/>
             <Drawer direction="right">
               <DrawerTrigger className="px-2 py-1.5 text-sm">View Favor History</DrawerTrigger>
-              <DrawerContent variant="right" className="ml-0 w-screen rounded-none border-none"></DrawerContent>
+              <DrawerContent variant="right" className="ml-0 pr-4 w-screen overflow-y-auto rounded-none border-none">
+                <ScrollArea className="max-h-screen py-4 overflow-auto flex flex-col gap-2">
+                  {session?.user.favorHistory.map((favor) => (
+                    favor.groupId ? (
+                      <FavorCompGroup
+                        favor={favor}
+                        user={session.user}
+                        groupName={groupFavors.find((group) => group.id === favor.groupId)?.name ?? "Unknown Group"}
+                        key={`favor-${favor.id}-${favor.sender.id}-${favor.favorValue}`}
+                      />
+                    ) : (
+                      <FavorCompFriend
+                        key={`favor-user-to-user-${favor.id}-${session.user?.id}-${favor?.receiver?.id as string}`}
+                        favor={favor}
+                        user={session.user}
+                      />
+                    )
+                  ))}
+                </ScrollArea>
+              </DrawerContent>
             </Drawer>
           </DropdownMenuContent>
         </DropdownMenu>
