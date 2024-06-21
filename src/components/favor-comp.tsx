@@ -19,147 +19,6 @@ type FavorProps = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> 
   user: Session["user"] | null
 }
 
-export const FavorCompFriend = React.forwardRef<HTMLDivElement, FavorProps>(({
-  favor,
-  user,
-  className,
-  ...props
-}, ref ) => {
-  const [capturedImage, setCapturedImage] = useState<string[]>([]);
-  const [showDialog, setShowDialog] = useState(false);
-  const [collapsed, setCollapsed] = useState(true);
-  const [loading, setLoading] = useState(false);
-
-  const isSender = favor.sender.id === user?.id;
-  const isActive = favor.working && favor.working.length > 0
-  const imageTaken = capturedImage.length > 0;
-
-  const onDecline = async () => {
-    setLoading(true);
-    const res = await declineFavorReq({ favor, user });
-    setLoading(false);
-
-    if (res.status === 200) toast.success(res.message);
-    else toast.error(res.message);
-  }
-
-  const onMarkActive = async () => {
-    setLoading(true);
-    // const res = await markActiveFavorReq({ favor, user });
-    setLoading(false);
-
-    // if (res.status === 200) toast.success(res.message);
-    // else toast.error(res.message);
-  }
-
-  const onComplete = async () => {
-    setLoading(true);
-    let image;
-
-    if (imageTaken) {
-      const formData = new FormData();
-      formData.set('file', capturedImage[0]);
-      formData.append('tags', 'finished_favor');
-      
-      const req = await fetch('/api/upload-image', {
-        method: 'POST',
-        body: formData
-      })
-
-      const uploadRes = await req.json()
-      image = uploadRes.data;
-    }
-
-    const res = await completeFavorReq({ favor, user, image });
-    setLoading(false);
-
-    if (res.status === 200) toast.success(res.message);
-    else toast.error(res.message);
-  }
-
-  return (
-    <Card className={className} {...props} ref={ref}>
-      <CardHeader onClick={() => setCollapsed(!collapsed)} className="p-4 2xs:p-6">
-        <CardTitle className="flex items-center gap-2">
-          <Badge className="h-8 min-w-8 items-center justify-center">{favor.favorValue}</Badge>
-          {favor.title}
-        </CardTitle>
-        <CardDescription className={collapsed ? `line-clamp-${favor.sender.id === user?.id ? '1' : '2'}` : ''}>{favor.description}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-col items-start gap-2 p-4 2xs:p-6 !pt-0">
-        <Link href={`/profile/${isSender ? favor.receiver?.id : favor.sender.id}`} className="flex items-center gap-2">
-          <UserIcon />
-          @{isSender ? favor.receiver?.username : favor.sender.username}
-        </Link>
-        <div className="flex items-center gap-2">
-          <CalendarIcon />
-          Due Date: {new Date(favor.dueDate).toLocaleDateString()}
-        </div>
-        {(!isSender) && (
-          isActive ? (
-            <div className="flex flex-row-reverse flex-wrap justify-between mt-2 gap-2">
-              <div className={cn(imageTaken ? "flex items-center justify-evenly gap-2 w-full" : 'w-fit')}>
-                <div className="flex flex-col justify-evenly h-full gap-2 w-full">
-                  {imageTaken && (
-                    <Button disabled={loading} onClick={() => onComplete()} className="w-full">
-                      {imageTaken && <CheckIcon className="mr-2"/>}
-                      Submit
-                    </Button>
-                  )}
-                  <Dialog
-                    open={showDialog}
-                    onOpenChange={(open) => setShowDialog(open)}
-                  >
-                    <DialogTrigger asChild>
-                      <Button disabled={loading} variant="outline" className="w-full">
-                        {imageTaken && <CameraIcon className="mr-2"/>}
-                        {imageTaken ? 'Retake' : 'Capture'}
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="h-svh w-svw max-w-full p-0">
-                      <Camera
-                        closeOnFirstPicture
-                        onClosed={() => setShowDialog(false)}
-                        onCapturedImages={(image) => {
-                          setCapturedImage(image);
-                          setShowDialog(false);
-                          }}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                </div>
-
-                {imageTaken && (
-                  <Dialog>
-                    <DialogTrigger>
-                      <img src={capturedImage[0]} alt="Captured Image" className="max-w-32 max-h-32 rounded-lg" />
-                    </DialogTrigger>
-                    <DialogContent className="p-0 max-w-[80%] max-h-[80%] overflow-clip">
-                      <img src={capturedImage[0]} alt="Captured Image" className="max-h-[80dvh] max-w-[80dvw] mx-auto" />
-                    </DialogContent>
-                  </Dialog>
-                )}
-              </div>
-              <Button disabled={loading} size='sm' variant='destructive' onClick={() => onDecline()} className={imageTaken ? 'w-full' : ''}>{imageTaken && <Trash2Icon className="mr-2"/>} Cancel ({favor.favorValue} Point{favor.favorValue > 1 && 's'})</Button>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between w-full mt-2 gap-2">
-              <Button disabled={loading} size='sm' variant='destructive' onClick={() => onDecline()}>Decline ({favor.favorValue} Point{favor.favorValue > 1 && 's'})</Button>
-              <Button disabled={loading} size='sm' onClick={() => onMarkActive()}>Mark Active</Button>
-            </div>
-          )
-        )}
-      </CardContent>
-      {isSender && (
-        <CardFooter className="pt-0">
-          <div className="flex items-center gap-1 mr-1 text-muted-foreground"><div className={cn("size-2 rounded-full", isActive ? 'bg-green-500' : 'bg-red-500')}/> Status:</div>
-          <span className="font-semibold">{isActive ? 'Active' : 'Inactive' }</span>
-        </CardFooter>
-      )}
-    </Card>
-  )
-})
-
 export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
   favor,
   user,
@@ -230,7 +89,25 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
   }
 
   const onComplete = async () => {
+    setLoading(true);
 
+    const formData = new FormData();
+    formData.set('file', capturedImage[0]);
+    formData.append('tags', 'finished_favor');
+    
+    const req = await fetch('/api/upload-image', {
+      method: 'POST',
+      body: formData
+    })
+
+    const uploadRes = await req.json()
+    const image = uploadRes.data;
+
+    const res = await completeFavorReq({ favor, user, image });
+    setLoading(false);
+
+    if (res.status === 200) toast.success(res.message);
+    else toast.error(res.message);
   }
 
   return (
@@ -261,24 +138,26 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
         )}
 
         {/* Status */}
-        {isSender && (
+        {(isSender || favor.completed) && (
           <CardDescription className="grid grid-cols-[24px_1fr] gap-2 items-center mt-2">
             <span className={cn('rounded-full size-3 mx-1.5', isActive ? 'bg-green-500' : 'bg-red-500')}/>
             <span>
-              Status: <span className="text-foreground font-semibold">{isActive ? 'Active' : 'Inactive'}</span>
+              Status: <span className="text-foreground font-semibold">
+                {favor.completed ? "Completed" : isActive ? "Active" : "Inactive"}
+              </span>
             </span>
             </CardDescription>
         )}
 
         {/* List Working Users (Groups Only) */}
-        {(isGroup && isActive && !ignore) && (
+        {(isGroup && isActive && !ignore && !favor.completed) && (
           <div className="w-full flex flex-wrap gap-2 mt-2">
             {favor.working?.map((worker) => <Badge key={`favor-${favor.id}-${worker.id}`}>{worker.name}</Badge>)}
           </div>
         )}
 
         {/* ((Decline / Ignore) or (Mark as Active)) */}
-        {(favor.groupId && group === null) ? (
+        {!favor.completed && ((favor.groupId && group === null) ? (
           <CardDescription>Loading...</CardDescription>
         ) : (
           isSender ? (
@@ -290,24 +169,43 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
               onClick={() => onCancel()}    // Cancellation fee handled in onCancel function
             >Cancel {isActive && `(${favor.favorValue} Favor Point${favor.favorValue > 1 ? 's' : ''})`}</Button>
           ) : (
-            <div className="flex gap-2 items-center justify-between mt-2">
+            <div className="flex gap-2 items-center mt-2">
               {isGroup ? (
                 isActive ? (
                   <>
-                    <Button
-                      size='sm'
-                      variant='destructive'
-                      disabled={loading}
-                      onClick={() => onDecline()}
-                    >
-                      Cancel
-                    </Button>
+                    {capturedImage.length === 0 ? (
+                      <Button
+                        size='sm'
+                        variant='destructive'
+                        disabled={loading}
+                        onClick={() => onDecline()}
+                      >
+                        Cancel {isActive && `(${favor.favorValue} Favor Point${favor.favorValue > 1 && 's'})`}
+                      </Button>
+                    ) : (
+                      <Button disabled={loading} size='icon' variant='destructive' onClick={() => setCapturedImage([])}>
+                        <Trash2Icon/>
+                      </Button>
+                    )}
 
-                    <Button
-                      size='sm'
-                      disabled={loading}
-                      onClick={() => onComplete()}
-                    >Complete</Button>
+                    <CompleteButton
+                      dialogOpen={showDialog}
+                      setDialogOpen={setShowDialog}
+                      loading={loading}
+                      imageTaken={capturedImage.length > 0}
+                      setCapturedImage={setCapturedImage}
+                    />
+
+                    {capturedImage.length > 0 && (
+                      <Button
+                        size='sm'
+                        disabled={loading}
+                        onClick={() => onComplete()}
+                        className="ml-auto"
+                      >
+                        Submit
+                      </Button>
+                    )}
                   </>
                 ) : (
                   <>
@@ -330,20 +228,39 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
               ) : (
                 isActive ? (
                   <>
-                    <Button
-                      size='sm'
-                      variant='destructive'
-                      disabled={loading}
-                      onClick={() => onDecline()}
-                    >
-                      Cancel {isActive && `(${favor.favorValue} Favor Point${favor.favorValue > 1 && 's'})`}
-                    </Button>
+                    {capturedImage.length === 0 ? (
+                      <Button
+                        size='sm'
+                        variant='destructive'
+                        disabled={loading}
+                        onClick={() => onDecline()}
+                      >
+                        Cancel {isActive && `(${favor.favorValue} Favor Point${favor.favorValue > 1 && 's'})`}
+                      </Button>
+                    ) : (
+                      <Button disabled={loading} size='icon' variant='destructive' onClick={() => setCapturedImage([])}>
+                        <Trash2Icon/>
+                      </Button>
+                    )}
 
-                    <Button
-                      size='sm'
-                      disabled={loading}
-                      onClick={() => onComplete()}
-                    >Complete</Button>
+                    <CompleteButton
+                      dialogOpen={showDialog}
+                      setDialogOpen={setShowDialog}
+                      loading={loading}
+                      imageTaken={capturedImage.length > 0}
+                      setCapturedImage={setCapturedImage}
+                    />
+
+                    {capturedImage.length > 0 && (
+                      <Button
+                        size='sm'
+                        disabled={loading}
+                        onClick={() => onComplete()}
+                        className="ml-auto"
+                      >
+                        Submit
+                      </Button>
+                    )}
                   </>
                 ) : (
                   <>
@@ -363,8 +280,56 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
                 )
               )}
             </div>
-          ))}
+          )
+        ))}
+
+        {/* (Image Capture) */}
+          {(capturedImage.length > 0 || favor.completed) && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <img src={capturedImage[0] ?? favor.completionImage} alt="Captured Image" className="w-full rounded-lg aspect-video object-cover object-center mt-2" />
+              </DialogTrigger>
+              <DialogContent className="p-0 max-w-[80%] max-h-[80%] overflow-clip">
+                <img src={capturedImage[0] ?? favor.completionImage} alt="Captured Image" className="max-h-[80dvh] max-w-[80dvw] mx-auto" />
+              </DialogContent>
+            </Dialog>
+          )}
       </CardContent>
     </Card>
   )
 })
+
+const CompleteButton = ({ 
+  dialogOpen, 
+  setDialogOpen, 
+  loading, 
+  imageTaken, 
+  setCapturedImage
+}: {
+  dialogOpen: boolean,
+  setDialogOpen: (open: boolean) => void,
+  loading: boolean,
+  imageTaken: boolean,
+  setCapturedImage: (image: string[]) => void
+}) => (
+  <Dialog
+    open={dialogOpen}
+    onOpenChange={setDialogOpen}
+  >
+    <DialogTrigger asChild>
+      <Button disabled={loading} size='sm' className={imageTaken ? "" : "ml-auto"}>
+        {imageTaken ? 'Retake' : 'Complete'}
+      </Button>
+    </DialogTrigger>
+    <DialogContent className="h-svh w-svw max-w-full p-0">
+      <Camera
+        closeOnFirstPicture
+        onClosed={() => setDialogOpen(false)}
+        onCapturedImages={(image) => {
+          setCapturedImage(image);
+          setDialogOpen(false);
+        }}
+      />
+    </DialogContent>
+  </Dialog>
+)

@@ -64,7 +64,7 @@ export default async function Home() {
 
       <FavorFilterer
         receivedFavors={session?.user.receivedFavors}
-        sentFavors={session?.user.sentFavors.filter((favor) => !favor.groupId)}
+        sentFavors={session?.user.sentFavors}
         groupFavors={groupFavors}
         user={session?.user as Session["user"] | null}
       />

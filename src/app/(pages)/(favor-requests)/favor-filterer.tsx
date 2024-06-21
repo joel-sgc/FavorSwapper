@@ -18,15 +18,18 @@ export const FavorFilterer = ({
   groupFavors: favorGroup[],
   user: Session["user"] | null,
 }) => {
-  const [showGroups, setShowGroups] = useState(false);
-  const [selected, setSelected] = useState<string>(receivedFavors.length > 0 ? "received" : "sent");
-
-  const isReceived = selected === "received";
-  const isSent = selected === 'sent';
-
   const groupReceived = groupFavors.map((group) => {return {...group, favors: group.favors.filter((favor) => favor.sender.id !== user?.id)}})
   const groupSent = groupFavors.map((group) => {return {...group, favors: group.favors.filter((favor) => favor.sender.id === user?.id)}})
 
+  const [selected, setSelected] = useState<string>((sentFavors.length > 0 || groupSent.some((group) => group.favors.length > 0)) ? "sent" : "received");
+  const isReceived = selected === "received";
+  const isSent = selected === 'sent';
+
+  const [showGroups, setShowGroups] = useState(
+    isReceived && receivedFavors.length === 0 && groupReceived.some((group) => group.favors.length > 0) || 
+    isSent && sentFavors.length === 0 && groupSent.some((group) => group.favors.length > 0)
+  );
+  
   const toggleCategory = (category: "received" | "sent") => {
     setSelected(() =>
       selected === category
@@ -78,8 +81,10 @@ export const FavorFilterer = ({
         </label>
       </div>
 
-      {((receivedFavors.length === 0 && isReceived) ||
-      (sentFavors.length === 0 && isSent)) ? (
+      {(
+        (isReceived && receivedFavors.length === 0 && (!showGroups || groupReceived.every(group => group.favors.length === 0))) ||
+        (isSent && sentFavors.length === 0 && (!showGroups || groupSent.every(group => group.favors.length === 0)))
+      ) ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center border-t-2">
           <h1 className="text-5xl font-semibold">No Favors</h1>
           <p className="text-lg text-muted-foreground">

@@ -2,7 +2,7 @@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "./ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, Fragment, ReactNode, SetStateAction, useEffect, useState } from "react";
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -196,10 +196,10 @@ export const FavorForm = ({ user, friend, group, setOpen, setFocused, className,
                         field.value
                           ? (
                             user.friends?.filter((friend) => friend?.id === field.value)?.map((friend) => (
-                              <>
+                              <Fragment key={`friend-${friend.id}-${user.id}-${Math.random()}`}>
                                 <img alt="" aria-hidden src={friend.image} referrerPolicy="no-referrer" className="size-7 rounded-full border bg-card mr-2"/>
                                 {friend.name}
-                              </>
+                              </Fragment>
                             ))
                           ) : "Select favor recipient..."
                       ) : group.name}
