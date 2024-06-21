@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "DACS Favor Swapper",
     short_name: "Favor Swapper",
-    theme_color: "#2c7e70",
+    theme_color: "#22c55e",
     background_color: "#0c0a09",
     icons:  [
       {

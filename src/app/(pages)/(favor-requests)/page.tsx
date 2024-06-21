@@ -1,13 +1,14 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { auth, favor, favorGroup, minimalUser } from "@/auth";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { FavorComp } from "@/components/favor-comp";
 import { PageTitle } from "@/components/page-title";
 import { ArrowLeftRightIcon } from "lucide-react";
 import { FavorFilterer } from "./favor-filterer";
 import { Button } from "@/components/ui/button";
 import prisma from "@/prisma/client";
-import { FavorCompFriend, FavorCompGroup } from "@/components/favor-comp";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Session } from "next-auth";
 
 export default async function Home() {
   const session = await auth();
@@ -48,20 +49,11 @@ export default async function Home() {
               <DrawerContent variant="right" className="ml-0 pr-4 w-screen overflow-y-auto rounded-none border-none">
                 <ScrollArea className="max-h-screen py-4 overflow-auto flex flex-col gap-2">
                   {session?.user.favorHistory.map((favor) => (
-                    favor.groupId ? (
-                      <FavorCompGroup
-                        favor={favor}
-                        user={session.user}
-                        groupName={groupFavors.find((group) => group.id === favor.groupId)?.name ?? "Unknown Group"}
-                        key={`favor-${favor.id}-${favor.sender.id}-${favor.favorValue}`}
-                      />
-                    ) : (
-                      <FavorCompFriend
-                        key={`favor-user-to-user-${favor.id}-${session.user?.id}-${favor?.receiver?.id as string}`}
-                        favor={favor}
-                        user={session.user}
-                      />
-                    )
+                    <FavorComp
+                      key={`favor-user-to-user-${favor.id}-${session.user?.id}-${favor?.receiver?.id as string}`}
+                      favor={favor}
+                      user={session.user}
+                    />
                   ))}
                 </ScrollArea>
               </DrawerContent>
@@ -74,7 +66,7 @@ export default async function Home() {
         receivedFavors={session?.user.receivedFavors}
         sentFavors={session?.user.sentFavors.filter((favor) => !favor.groupId)}
         groupFavors={groupFavors}
-        user={session?.user}
+        user={session?.user as Session["user"] | null}
       />
     </main>
   );

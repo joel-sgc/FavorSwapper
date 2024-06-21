@@ -1,11 +1,11 @@
 "use client";
-import { FavorCompFriend, FavorCompGroup } from "@/components/favor-comp";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { badgeVariants } from "@/components/ui/badge";
+import { FavorComp } from "@/components/favor-comp";
 import { favor, favorGroup } from "@/auth";
 import { Session } from "next-auth";
-import { cn } from "@/lib/utils";
 import { useState  } from "react";
+import { cn } from "@/lib/utils";
 
 export const FavorFilterer = ({
   receivedFavors = [],
@@ -16,7 +16,7 @@ export const FavorFilterer = ({
   receivedFavors?: favor[],
   sentFavors?: favor[],
   groupFavors: favorGroup[],
-  user?: Session["user"],
+  user: Session["user"] | null,
 }) => {
   const [showGroups, setShowGroups] = useState(false);
   const [selected, setSelected] = useState<string>(receivedFavors.length > 0 ? "received" : "sent");
@@ -90,7 +90,7 @@ export const FavorFilterer = ({
         <ScrollArea className="flex-1 max-h-[calc(100dvh-284px)] border-t-2 pt-2 px-1 pb-[56px] overflow-auto hidden-scrollbar">
           {isReceived &&
             receivedFavors.map((favor) => (
-              <FavorCompFriend
+              <FavorComp
                 key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`}
                 favor={favor}
                 user={user}
@@ -100,7 +100,7 @@ export const FavorFilterer = ({
 
           {isSent &&
             sentFavors.map((favor) => (
-              <FavorCompFriend
+              <FavorComp
                 key={`favor-user-to-user-${favor.id}-${user?.id}-${favor?.receiver?.id as string}`}
                 favor={favor}
                 user={user}
@@ -110,10 +110,9 @@ export const FavorFilterer = ({
 
           {showGroups && (
             (isReceived ? groupReceived : groupSent).map((group) => group.favors.map((favor) => 
-              <FavorCompGroup
+              <FavorComp
                 key={`favor-group-to-user-${favor.id}-${user?.id}-${favor.groupId as string}`}
                 favor={favor}
-                groupName={group.name}
                 user={user}
                 className="mt-2"
               />

@@ -74,7 +74,7 @@ const GroupPage = async ({ params }: { params: { id: string }}) => {
           </Drawer>
         </div>
       ) : (
-        <FavorList user={session?.user} favors={favors} className="w-full h-full flex-1 overflow-auto hidden-scrollbar max-h-[calc(100dvh-262px)] pb-[56px]"/>   // FAVOR LIST
+        <FavorList user={session?.user as Session["user"]} favors={favors} className="w-full h-full flex-1 overflow-auto hidden-scrollbar max-h-[calc(100dvh-262px)] pb-[56px]"/>   // FAVOR LIST
       )}
     </main>
   )
