@@ -19,14 +19,8 @@ export const MiddlewareProvider = ({ session, children, ...props }: { session: S
   const router = useRouter();
 
   useEffect(() => {
-    const standalone = window.matchMedia("(display-mode: standalone)").matches
-
-    if (iOS()) {
-      document.querySelectorAll('.favor-form-drawer').forEach((el) => {
-        // el.style.bottom = ''
-      })
-    }
-    
+    if (!window) return;
+    const standalone = window.matchMedia("(display-mode: standalone)").matches 
 
     if (standalone && iOS()) {
       PullToRefresh.init({
