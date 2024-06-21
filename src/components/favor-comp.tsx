@@ -235,7 +235,7 @@ export const FavorComp = React.forwardRef<HTMLDivElement, FavorProps>(({
                         disabled={loading}
                         onClick={() => onDecline()}
                       >
-                        Cancel {isActive && `(${favor.favorValue} Favor Point${favor.favorValue > 1 && 's'})`}
+                        Cancel {isActive && `(${favor.favorValue} Favor Point${favor.favorValue > 1 ? 's' : ''})`}
                       </Button>
                     ) : (
                       <Button disabled={loading} size='icon' variant='destructive' onClick={() => setCapturedImage([])}>

@@ -4,7 +4,7 @@ import { auth, favor, favorGroup, minimalUser } from "@/auth";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FavorComp } from "@/components/favor-comp";
 import { PageTitle } from "@/components/page-title";
-import { ArrowLeftRightIcon } from "lucide-react";
+import { ArrowLeftRightIcon, History } from "lucide-react";
 import { FavorFilterer } from "./favor-filterer";
 import { Button } from "@/components/ui/button";
 import prisma from "@/prisma/client";
@@ -47,12 +47,18 @@ export default async function Home() {
             <Drawer direction="right">
               <DrawerTrigger className="px-2 py-1.5 text-sm">View Favor History</DrawerTrigger>
               <DrawerContent variant="right" className="ml-0 pr-4 w-screen overflow-y-auto rounded-none border-none">
-                <ScrollArea className="max-h-screen py-4 overflow-auto flex flex-col gap-2">
+                <PageTitle className="pt-4 border-b-2 pb-2">
+                  <History size={32}/>
+                  <h1>Favor History</h1>
+                </PageTitle>
+
+                <ScrollArea className="max-h-screen py-2 overflow-auto">
                   {session?.user.favorHistory.map((favor) => (
                     <FavorComp
                       key={`favor-user-to-user-${favor.id}-${session.user?.id}-${favor?.receiver?.id as string}`}
                       favor={favor}
                       user={session.user}
+                      className="mt-2 first:mt-0"
                     />
                   ))}
                 </ScrollArea>
